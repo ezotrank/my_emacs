@@ -1,5 +1,5 @@
 ;; provide a useful error trace if loading this .emacs fails
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 
 ;; Require getoo-site
 ;; Install packages
@@ -36,6 +36,7 @@
 (add-to-path 'packages/ruby-mode)
 (add-to-path 'packages/yasnippet)
 (add-to-path 'packages/auto-complete)
+(add-to-path 'packages/rspec-mode)
 
 (defun autocompile ()
   "Compile itself if this is config file"
@@ -59,7 +60,7 @@
 
 (load-init
   '(general yaml ruby linummode eshell iswitchb ido pastemacs git tramp 
-            lua pastetext org ecb css javascript yasnippet autocomplate))
+            lua pastetext org ecb css javascript yasnippet autocomplate feature))
 
 ;; Start daemon
 (server-start)

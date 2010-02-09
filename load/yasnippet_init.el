@@ -3,4 +3,6 @@
 (setq yas/root-directory "~/.emacs.d/own_snippets")
 (yas/load-directory "~/.emacs.d/packages/yasnippet/snippets")
 (yas/load-directory yas/root-directory)
+(setq rails-snippets "~/.emacs.d/packages/rails-snippets")
+(yas/load-directory rails-snippets)
 (setq yas/global-mode t)

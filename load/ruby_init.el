@@ -5,7 +5,16 @@
 (require 'rinari)
 (setq rinari-tags-file-name "TAGS")
 (require 'rhtml-mode)
-(add-to-list 'auto-mode-alist '("\\.erb$" . rhtml-mode))
+
+(autoload 'ruby-mode "ruby-mode" "Major mode for editing ruby scripts." t)
+(setq auto-mode-alist  (cons '(".rb$" . ruby-mode) auto-mode-alist))
+(setq auto-mode-alist  (cons '(".erb$" . rhtml-mode) auto-mode-alist))
+
+;; Rspec
+(require 'rspec-mode)
+
+;; Cucumber
+(require 'feature-mode)
 
 ;; CTAGS
 (setq path-to-ctags "/usr/bin/ctags") ;; <- your ctags path here
@@ -23,10 +32,7 @@
       '(try-complete-abbrev
         try-complete-file-name
         try-expand-dabbrev))
-(autoload 'ruby-mode "ruby-mode" "Major mode for editing ruby scripts." t)
-(setq auto-mode-alist  (cons '(".rb$" . ruby-mode) auto-mode-alist))
-(setq auto-mode-alist  (cons '(".erb$" . html-mode) auto-mode-alist))
-(setq auto-mode-alist  (cons '("html.erb$" . html-mode) auto-mode-alist))
+
 
 (defun nginx-passenger-restart () 
   (interactive)
