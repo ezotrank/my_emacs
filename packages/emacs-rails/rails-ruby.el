@@ -5,8 +5,8 @@
 ;; Authors: Dmitry Galinsky <dima dot exe at gmail dot com>
 
 ;; Keywords: ruby rails languages oop
-;; $URL: svn://rubyforge.org/var/svn/emacs-rails/trunk/rails-ruby.el $
-;; $Id: rails-ruby.el 232 2008-08-01 22:42:31Z dimaexe $
+;; $URL$
+;; $Id$
 
 ;;; License
 
@@ -137,7 +137,7 @@ See the variable `align-rules-list' for more details.")
 (defun ruby-newline-and-indent ()
   (interactive)
   (newline)
-  (ruby-indent-command))
+  (ruby-indent-line))
 
 (defun ruby-toggle-string<>simbol ()
   "Easy to switch between strings and symbols."
@@ -178,12 +178,21 @@ See the variable `align-rules-list' for more details.")
   (let ((abuf (concat "*" buf "*")))
     (when (not (comint-check-proc abuf))
       (set-buffer (make-comint buf rails-ruby-command nil script params)))
-    (inferior-ruby-mode)
-    (make-local-variable 'inferior-ruby-first-prompt-pattern)
-    (make-local-variable 'inferior-ruby-prompt-pattern)
-    (setq inferior-ruby-first-prompt-pattern "^>> "
-          inferior-ruby-prompt-pattern "^>> ")
-    (pop-to-buffer abuf)))
+    (if (fboundp 'inf-ruby-mode)
+      (progn
+        (inf-ruby-mode)
+        (make-local-variable 'inf-ruby-first-prompt-pattern)
+        (make-local-variable 'inf-ruby-prompt-pattern)
+        (setq inf-ruby-first-prompt-pattern "^>> "
+              inf-ruby-prompt-pattern "^>> ")
+        (pop-to-buffer abuf))
+      (progn
+        (inferior-ruby-mode)
+        (make-local-variable 'inferior-ruby-first-prompt-pattern)
+        (make-local-variable 'inferior-ruby-prompt-pattern)
+        (setq inferior-ruby-first-prompt-pattern "^>> "
+              inferior-ruby-prompt-pattern "^>> ")
+        (pop-to-buffer abuf)))))
 
 (defun complete-ruby-method (prefix &optional maxnum)
   (if (capital-word-p prefix)

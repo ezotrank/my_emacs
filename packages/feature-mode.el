@@ -237,7 +237,7 @@ back-dent the line by `feature-indent-offset' spaces.  On reaching column
 ;; Snippets
 ;;
 
-(defvar feature-snippet-directory (concat (file-name-directory load-file-name) "snippets")
+(defvar feature-snippet-directory (concat (file-name-directory load-file-name) "~/.emacs.d/own_snippets")
   "Path to the feature-mode snippets.
 
 If the yasnippet library is loaded, snippets in this directory

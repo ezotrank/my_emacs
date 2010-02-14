@@ -1,20 +1,29 @@
+;; Comment this, coz with this don't work feature-mode
 (require 'rails)
-(require 'ruby-electric)
-(require 'snippet)
-(require 'find-recursive)
+(add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
+(autoload 'ruby-mode "ruby-mode" "Major mode for editing ruby scripts." t)
+(setq auto-mode-alist  (cons '("\\.rb$" . ruby-mode) auto-mode-alist))
+
+;; (require 'ruby-electric)
+;; (require 'snippet)
+;; (require 'find-recursive)
 (require 'rinari)
 (setq rinari-tags-file-name "TAGS")
-(require 'rhtml-mode)
 
-(autoload 'ruby-mode "ruby-mode" "Major mode for editing ruby scripts." t)
-(setq auto-mode-alist  (cons '(".rb$" . ruby-mode) auto-mode-alist))
-(setq auto-mode-alist  (cons '(".erb$" . rhtml-mode) auto-mode-alist))
+(require 'rhtml-mode)
+(autoload 'rhtml-mode "rhtml-mode" "Major mode for editing rails html." t)
+(setq auto-mode-alist  (cons '("\\.erb$" . rhtml-mode) auto-mode-alist))
 
 ;; Rspec
 (require 'rspec-mode)
 
 ;; Cucumber
 (require 'feature-mode)
+(autoload 'ruby-mode "feature-mode" "Major mode for editing ruby scripts." t)
+(setq auto-mode-alist  (cons '("\\.feature$" . feature-mode) auto-mode-alist))
 
 ;; CTAGS
 (setq path-to-ctags "/usr/bin/ctags") ;; <- your ctags path here

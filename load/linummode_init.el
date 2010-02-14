@@ -14,3 +14,7 @@
      '(lambda() (linum-mode 1)))
 (add-hook 'rails-mode-hook
      '(lambda() (linum-mode 1)))
+(add-hook 'feature-mode-hook
+     '(lambda() (linum-mode 1)))
+(add-hook 'rspec-mode-hook
+     '(lambda() (linum-mode 1)))

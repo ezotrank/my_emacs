@@ -6,8 +6,8 @@
 ;;          Rezikov Peter <crazypit13 (at) gmail.com>
 
 ;; Keywords: ruby rails languages oop
-;; $URL: svn://rubyforge.org/var/svn/emacs-rails/trunk/rails.el $
-;; $Id: rails.el 232 2008-08-01 22:42:31Z dimaexe $
+;; $URL$
+;; $Id$
 
 ;;; License
 
@@ -39,6 +39,7 @@
   (require 'ruby-mode)
   (require 'ruby-electric))
 
+(require 'grep)
 (require 'sql)
 (require 'ansi-color)
 (require 'etags)
@@ -50,6 +51,16 @@
 
 (require 'rails-compat)
 (require 'rails-project)
+
+
+;;;;;;;;; Defining custom group before loading other file
+
+(defgroup rails nil
+  "Edit Rails projet with Emacs."
+  :group 'programming
+  :prefix "rails-")
+
+;;;;;;;;; Loading most of the mode
 
 (require 'rails-core)
 (require 'rails-ruby)
@@ -67,15 +78,12 @@
 (require 'rails-model-layout)
 (require 'rails-controller-layout)
 (require 'rails-features)
+(require 'rails-lib-layout)
 (require 'rails-spec)
-
+(require 'rails-shoulda)
+(require 'rails-refactoring)
 
 ;;;;;;;;;; Variable definition ;;;;;;;;;;
-
-(defgroup rails nil
-  "Edit Rails projet with Emacs."
-  :group 'programming
-  :prefix "rails-")
 
 (defcustom rails-api-root nil
   "*Root of Rails API html documentation. Must be a local directory."
@@ -110,6 +118,11 @@ Emacs w3m browser."
   "Force the use of text menus by default."
   :group 'rails
   :type 'boolean)
+
+(defcustom rails-text-menu-function nil
+  "Which function to use to create text menus. nil means #'rails-core:ttm-menu"
+  :group 'rails
+  :type 'string)
 
 (defcustom rails-ask-when-reload-tags nil
   "Indicates whether the user should confirm reload a TAGS table or not."
@@ -162,24 +175,44 @@ Emacs w3m browser."
 (defvar rails-secondary-switch-func nil)
 (defvar rails-required-lisp-eval-depth 1000) ; Specifies the minimum required value of max-lisp-eval-depth for rails mode to work
 
+(defcustom rails-indent-and-complete t
+  "Key to indent and complete."
+  :group 'rails
+  :type 'boolean)
+
 (defvar rails-directory<-->types
   '((:controller       "app/controllers/")
-    (:layout           "app/layouts/")
+    (:layout           "app/views/layouts/")
     (:view             "app/views/")
     (:observer         "app/models/" (lambda (file) (rails-core:observer-p file)))
     (:mailer           "app/models/" (lambda (file) (rails-core:mailer-p file)))
     (:model            "app/models/" (lambda (file) (and (not (rails-core:mailer-p file))
                                                          (not (rails-core:observer-p file)))))
     (:helper           "app/helpers/")
+    (:unit-test        "vendor/plugins/.*/test/") ; needs to appear before more-general :plugin
+    (:model            "vendor/plugins/.*/lib/") ; needs to appear before more-general :plugin
     (:plugin           "vendor/plugins/")
     (:unit-test        "test/unit/")
     (:functional-test  "test/functional/")
+    (:integration-test  "test/integration/")
     (:fixture          "test/fixtures/")
+    (:lib              "lib")
+    (:rspec-controller "spec/controllers")
+    (:rspec-fixture    "spec/fixtures")
+    (:rspec-lib        "spec/lib")
+    (:rspec-model      "spec/models")
     (:migration        "db/migrate"))
   "Rails file types -- rails directories map")
 
-(defvar rails-enviroments '("development" "production" "test"))
-(defvar rails-default-environment (first rails-enviroments))
+(defcustom rails-environments '("development" "production" "test")
+  "rails environments"
+  :group 'rails
+  :type '(repeat string))
+
+(defcustom rails-default-environment (first rails-environments)
+  "rails environment used by default"
+  :group 'rails
+  :type 'string)
 
 (defvar rails-adapters-alist
   '(("mysql"      . sql-mysql)
@@ -187,8 +220,30 @@ Emacs w3m browser."
     ("sqlite3"    . sql-sqlite))
   "Sets emacs sql function for rails adapter names.")
 
-(defvar rails-tags-dirs '("app" "lib" "test" "db")
-  "List of directories from RAILS_ROOT where ctags works.")
+(defcustom rails-tags-dirs '("app" "lib" "test" "db")
+  "List of directories from RAILS_ROOT where ctags works."
+  :group 'rails
+  :type '(repeat string))
+
+(defcustom rails-grep-extensions '("builder" "erb" "haml" "liquid" "mab" "rake" "rb" "rhtml" "rjs" "rxml" "yml" "feature" "js" "html")
+  "List of file extensions which grep searches."
+  :group 'rails
+  :type '(repeat string))
+
+(defvar rails-error-regexp-alist
+  '(
+    (" /?\\(app/[a-z0-9._/]*\\):\\([0-9]+\\)" 1 2)
+    (" /?\\(lib/[a-z0-9._/]*\\):\\([0-9]+\\)" 1 2)
+    (" /?\\(test/[a-z0-9._/]*\\):\\([0-9]+\\)" 1 2)
+    (" /?\\(db/[a-z0-9._/]*\\):\\([0-9]+\\)" 1 2)
+    (" /?\\(vendor/[a-z0-9._/]*\\):\\([0-9]+\\)" 1 2)
+    (" /?\\(app/[a-z0-9._/]*\\)" 1)
+    (" /?\\(lib/[a-z0-9._/]*\\)" 1)
+    (" /?\\(test/[a-z0-9._/]*\\)" 1)
+    (" /?\\(db/[a-z0-9._/]*\\)" 1)
+    (" /?\\(vendor/[a-z0-9._/]*\\)" 1)
+    )
+  "Rails specific compilation-error-regexp-alist.")
 
 (defun rails-use-text-menu ()
   "If t use text menu, popup menu otherwise"
@@ -200,10 +255,36 @@ Emacs w3m browser."
   (rails-project:with-root (root)
                            (svn-status root)))
 
+(defun rails-git-status-into-root ()
+  (interactive)
+  (rails-project:with-root (root)
+                           (git-status root)))
+
+(defun rails-scm-status-into-root ()
+  (interactive)
+  (rails-project:with-root (root)
+                           (cond ((file-directory-p (expand-file-name ".git" root))
+                                  (rails-git-status-into-root))
+                                 ((file-directory-p (expand-file-name ".svn" root))
+                                  (rails-svn-status-into-root)))))
+
 ;; helper functions/macros
+
+(defun backward-ruby-object ()
+  (if (looking-back "[-a-zA-Z_#:*]+" (line-beginning-position) t)
+      (goto-char (match-beginning 0))))
+
+(defun forward-ruby-object (n)
+  (if (> 0 n)
+      (when (search-backward-regexp "[^-a-zA-Z_#:*][-a-zA-Z_#:*]+" nil t (- n))
+	(forward-char)
+	(point))
+      (when (search-forward-regexp "[-a-zA-Z_#:*]+" nil t n)
+	(goto-char (match-end 0)))))
+
 (defun rails-search-doc (&optional item)
   (interactive)
-  (setq item (if item item (thing-at-point 'sexp)))
+  (setq item (if item item (thing-at-point 'ruby-object)))
   (unless item
     (setq item (read-string "Search symbol: ")))
   (if item
@@ -217,8 +298,8 @@ Emacs w3m browser."
           (setq buffer-read-only nil)
           (kill-region (point-min) (point-max))
           (message (concat "Please wait..."))
-          (call-process rails-ri-command nil "*ri*" t item)
-          (local-set-key [return] 'rails-search-doc)
+          (call-process rails-ri-command nil "*ri*" t "-T" "-f" "ansi" item)
+;          (local-set-key [return] 'rails-search-doc) ; because this kicks in in text files. why? -mike
           (ansi-color-apply-on-region (point-min) (point-max))
           (setq buffer-read-only t)
           (goto-char (point-min))))))
@@ -250,6 +331,12 @@ Emacs w3m browser."
           (symbol-value (intern minor-mode-abbrev))
           local-abbrev-table))))))
 
+(defun rails-grep-project (regexp)
+  "Find regexp in project."
+  (interactive (progn (grep-compute-defaults)
+                      (list (grep-read-regexp))))
+  (rgrep regexp (mapconcat (lambda (ext) (format "*.%s" ext)) rails-grep-extensions " ") (rails-project:root)))
+
 ;;;;;;;;;; Database integration ;;;;;;;;;;
 
 (defstruct rails-db-conf adapter host database username password)
@@ -278,7 +365,7 @@ Emacs w3m browser."
 
 (defun rails-read-enviroment-name (&optional default)
   "Read Rails enviroment with auto-completion."
-  (completing-read "Environment name: " (list->alist rails-enviroments) nil nil default))
+  (completing-read "Environment name: " (list->alist rails-environments) nil nil default))
 
 (defun* rails-run-sql (&optional env)
   "Run a SQL process for the current Rails project."
@@ -397,6 +484,7 @@ necessary."
   (make-local-variable 'tags-file-name)
   (make-local-variable 'rails-primary-switch-func)
   (make-local-variable 'rails-secondary-switch-func)
+  (set (make-local-variable 'compile-command) "rake")
   (rails-features:install))
 
 ;; hooks
@@ -411,10 +499,11 @@ necessary."
             (modify-syntax-entry ?! "w" (syntax-table))
             (modify-syntax-entry ?: "w" (syntax-table))
             (modify-syntax-entry ?_ "w" (syntax-table))
-            (local-set-key (kbd "C-.") 'complete-tag)
-            (local-set-key (if rails-use-another-define-key
-                               (kbd "TAB") (kbd "<tab>"))
-                           'indent-and-complete)
+            ;(local-set-key (kbd "C-.") 'complete-tag)
+	    (if rails-indent-and-complete
+		(local-set-key (if rails-use-another-define-key
+				   (kbd "TAB") (kbd "<tab>"))
+			       'indent-and-complete))
             (local-set-key (rails-key "f") '(lambda()
                                               (interactive)
                                               (mouse-major-mode-menu (rails-core:menu-position))))
@@ -432,9 +521,10 @@ necessary."
             (rails-project:with-root
              (root)
              (progn
-               (local-set-key (if rails-use-another-define-key
-                                  (kbd "TAB") (kbd "<tab>"))
-                              'indent-and-complete)
+	       (if rails-indent-and-complete
+		   (local-set-key (if rails-use-another-define-key
+				      (kbd "TAB") (kbd "<tab>"))
+				  'indent-and-complete))
                (rails-minor-mode t)
                (rails-apply-for-buffer-type)))))
 
@@ -453,12 +543,11 @@ necessary."
 (setq auto-mode-alist  (cons '("\\.mab$"     . ruby-mode) auto-mode-alist))
 (setq auto-mode-alist  (cons '("Rakefile$"   . ruby-mode) auto-mode-alist))
 (setq auto-mode-alist  (cons '("\\.haml$"    . haml-mode) auto-mode-alist))
-(setq auto-mode-alist  (cons '("\\.rjs$"     . ruby-mode) auto-mode-alist))
 (setq auto-mode-alist  (cons '("\\.rxml$"    . ruby-mode) auto-mode-alist))
 (setq auto-mode-alist  (cons '("\\.builder$" . ruby-mode) auto-mode-alist))
 (setq auto-mode-alist  (cons '("\\.rjs$"     . ruby-mode) auto-mode-alist))
-(setq auto-mode-alist  (cons '("\\.rhtml$"   . html-mode) auto-mode-alist))
-(setq auto-mode-alist  (cons '("\\.erb$"     . html-mode) auto-mode-alist))
+(setq auto-mode-alist  (cons '("\\.rhtml$"   . rhtml-mode) auto-mode-alist))
+(setq auto-mode-alist  (cons '("\\.erb$"     . rhtml-mode) auto-mode-alist))
 
 (modify-coding-system-alist 'file "\\.rb$"     'utf-8)
 (modify-coding-system-alist 'file "\\.rake$"   'utf-8)

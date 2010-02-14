@@ -1,0 +1,8 @@
+#name: Feature: Name
+# --
+Feature: ${1:Name}
+  In order ${2:to value}
+  As a ${3:role}
+  I want ${4:feature}
+  
+  $0

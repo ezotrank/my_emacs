@@ -59,8 +59,8 @@
 ;; (add-hook 'after-save-hook 'autocompile)
 
 (load-init
-  '(general yaml ruby linummode eshell iswitchb ido pastemacs git tramp 
-            lua pastetext org ecb css javascript yasnippet autocomplate feature))
+  '(general ruby yaml linummode eshell iswitchb ido pastemacs git tramp 
+            lua pastetext org ecb css javascript yasnippet autocomplate))
 
 ;; Start daemon
 (server-start)

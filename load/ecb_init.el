@@ -10,7 +10,7 @@
  '(ecb-layout-name "ezo1")
  '(ecb-layout-window-sizes (quote (("ezo1" (ecb-directories-buffer-name 0.17985611510791366 . 0.9736842105263158)) ("ezo1" (ecb-directories-buffer-name 0.18705035971223022 . 0.9736842105263158)))))
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
- '(ecb-source-path (quote ("/home/ezo/dev")))
+ '(ecb-source-path (quote ("~/dev")))
  '(ecb-tar-setup (quote cons))
  '(ecb-tip-of-the-day nil)
  '(org-default-notes-file "~/org/notes")
