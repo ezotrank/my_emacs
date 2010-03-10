@@ -6,9 +6,9 @@
  '(org-default-notes-file "~/org/notes")
  '(org-directory "~/org")
 )
-(setq org-agenda-files (list "~/org/pronix.org"
-                             "~/org/work.org") 
-      )
+;; (setq org-agenda-files (list "~/org/pronix.org"
+;;                              "~/org/work.org") 
+;;       )
 
 
 (global-set-key "\C-cl" 'org-store-link)
@@ -27,12 +27,14 @@
 (global-font-lock-mode 1)
 (setq org-log-done t)
 
-
-(defun org-my()
-  (interactive)
-  (find-file "~/org/default.org")
-)
 (defun org-hotkeys()
   (interactive)
   (find-file "~/org/hotkey.org")
 )
+
+;; Some hooks
+(add-hook 'org-mode-hook '(lambda () 
+                            (auto-fill-mode)
+                            (flyspell-mode)
+                            )
+          )

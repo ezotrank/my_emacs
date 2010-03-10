@@ -164,7 +164,7 @@ contents of this directory."
 
 
 (defcustom ecb-show-sources-in-directories-buffer '("left7" "left13"
-                                                    "left14" "left15" "ezo1")
+                                                    "left14" "left15")
   "*Show source files in directories buffer.
 The value is either 'always or 'never or a list of layout-names for which
 layouts sources should be displayed in the directories window."

@@ -1,13 +1,6 @@
 ;; provide a useful error trace if loading this .emacs fails
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 
-;; Require getoo-site
-;; Install packages
-;; app-emacs/cedet
-;; app-emacs/elib
-;; app-emacs/jde
-;; app-emacs/mmm-mode
-;; app-emacs/pymacs
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")
   (require 'site-gentoo))
 
@@ -29,13 +22,14 @@
 (add-to-path 'packages)                 ; additional packages
 (add-to-path 'packages/themes)
 (add-to-path 'packages/git-emacs)
+(add-to-path 'packages/cedet)
 (add-to-path 'packages/ecb)
-(add-to-path 'packages/emacs-rails)
-(add-to-path 'packages/rinari)
-(add-to-path 'packages/rhtml)
-(add-to-path 'packages/ruby-mode)
 (add-to-path 'packages/yasnippet)
 (add-to-path 'packages/auto-complete)
+(add-to-path 'packages/ruby-mode)
+(add-to-path 'packages/rails-minor-mode)
+(add-to-path 'packages/rhtml-minor-mode)
+(add-to-path 'packages/rinari)
 (add-to-path 'packages/rspec-mode)
 
 (defun autocompile ()
@@ -59,7 +53,7 @@
 ;; (add-hook 'after-save-hook 'autocompile)
 
 (load-init
-  '(general ruby yaml linummode eshell iswitchb ido pastemacs git tramp 
+  '(general cedet ruby yaml linummode eshell iswitchb ido pastemacs git tramp 
             lua pastetext org ecb css javascript yasnippet autocomplate))
 
 ;; Start daemon

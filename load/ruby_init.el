@@ -1,29 +1,19 @@
 ;; Comment this, coz with this don't work feature-mode
-(require 'rails)
+(autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
-(autoload 'ruby-mode "ruby-mode" "Major mode for editing ruby scripts." t)
-(setq auto-mode-alist  (cons '("\\.rb$" . ruby-mode) auto-mode-alist))
+(add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
-;; (require 'ruby-electric)
-;; (require 'snippet)
-;; (require 'find-recursive)
+(require 'rails)
+(require 'rhtml-mode)
 (require 'rinari)
 (setq rinari-tags-file-name "TAGS")
-
-(require 'rhtml-mode)
-(autoload 'rhtml-mode "rhtml-mode" "Major mode for editing rails html." t)
-(setq auto-mode-alist  (cons '("\\.erb$" . rhtml-mode) auto-mode-alist))
-
-;; Rspec
 (require 'rspec-mode)
-
-;; Cucumber
 (require 'feature-mode)
-(autoload 'ruby-mode "feature-mode" "Major mode for editing ruby scripts." t)
-(setq auto-mode-alist  (cons '("\\.feature$" . feature-mode) auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
 ;; CTAGS
 (setq path-to-ctags "/usr/bin/ctags") ;; <- your ctags path here
@@ -43,8 +33,8 @@
         try-expand-dabbrev))
 
 
-(defun nginx-passenger-restart () 
+(defun nginx-passenger-restart ()
   (interactive)
-  (shell-command "echo 1 > /home/ezo/dev/pronix_project_1/hfilehosting/tmp/restart.txt" t)
+  (shell-command "echo 1 > /home/ezo/dev/pronix/multishop/tmp/restart.txt" t)
   )
 (global-set-key (kbd "C-x r n") 'nginx-passenger-restart)
