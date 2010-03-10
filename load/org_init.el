@@ -3,13 +3,17 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
 (custom-set-variables
- '(org-default-notes-file "~/org/notes")
  '(org-directory "~/org")
+ '(org-default-notes-file "~/org/notes")
+ '(org-agenda-files (quote ("~/org/agenda.org")))
 )
 ;; (setq org-agenda-files (list "~/org/pronix.org"
 ;;                              "~/org/work.org") 
 ;;       )
 
+;; To save the clock history across Emacs sessions
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
 
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)

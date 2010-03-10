@@ -56,6 +56,13 @@
   '(general cedet ruby yaml linummode eshell iswitchb ido pastemacs git tramp 
             lua pastetext org ecb css javascript yasnippet autocomplate))
 
-;; Start daemon
-(server-start)
+;; Some staff to mutt 
 (add-to-list 'auto-mode-alist '("/mutt" . mail-mode))
+
+;; Kill emacs daemon but save session
+(defun my-kill-emacs ()
+  (interactive)
+  (save-some-buffers)
+  (desktop-save-in-desktop-dir)
+  (kill-emacs))
+(global-set-key (kbd "C-x c") 'my-kill-emacs)
