@@ -5,11 +5,11 @@
 (custom-set-variables
  '(org-directory "~/org")
  '(org-default-notes-file "~/org/notes")
- '(org-agenda-files (quote ("~/org/agenda.org")))
-)
-;; (setq org-agenda-files (list "~/org/pronix.org"
-;;                              "~/org/work.org") 
-;;       )
+ )
+
+(setq org-agenda-files
+      (list "~/org/agenda.org" "~/org/personal.org" "~/org/klondaik.org"))
+
 
 ;; To save the clock history across Emacs sessions
 (setq org-clock-persist 'history)
@@ -34,6 +34,11 @@
 (defun org-hotkeys()
   (interactive)
   (find-file "~/org/hotkey.org")
+)
+
+(defun org-agenda-file()
+  (interactive)
+  (find-file "~/org/agenda.org")
 )
 
 ;; Some hooks
