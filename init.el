@@ -19,7 +19,6 @@
 (add-to-path 'packages/themes)
 (add-to-path 'packages/magit)
 (add-to-path 'packages/ruby-mode)
-(add-to-path 'packages/auto-complete-in)
 (add-to-path 'packages/yasnippet)
 
 (load-init
