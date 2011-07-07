@@ -81,6 +81,11 @@
   :tag "Org Expiry"
   :group 'org)
 
+(defcustom org-expiry-inactive-timestamps nil
+  "Insert inactive timestamps for the created and expired time properties"
+  :type 'boolean
+  :group 'org-expiry)
+
 (defcustom org-expiry-created-property-name "CREATED"
   "The name of the property for setting the creation date."
   :type 'string
@@ -237,10 +242,10 @@ Otherwise rely on `org-expiry-confirm-flag' to decide."
     (when (org-expiry-expired-p)
       (org-back-to-heading)
       (looking-at org-complex-heading-regexp)
-      (let* ((ov (org-make-overlay (point) (match-end 0)))
+      (let* ((ov (make-overlay (point) (match-end 0)))
 	     (e (org-expiry-expired-p))
 	     (d (time-to-number-of-days e)))
-	(org-overlay-put ov 'face 'secondary-selection)
+	(overlay-put ov 'face 'secondary-selection)
 	(if (or force
 		(null org-expiry-confirm-flag)
 		(and (eq org-expiry-confirm-flag 'interactive)
@@ -248,7 +253,7 @@ Otherwise rely on `org-expiry-confirm-flag' to decide."
 		(and org-expiry-confirm-flag
 		     (y-or-n-p (format "Entry expired by %d days.  Process? " d))))
 	  (funcall 'org-expiry-handler-function))
-	(org-delete-overlay ov)))))
+	(delete-overlay ov)))))
 
 (defun org-expiry-process-entries (beg end)
   "Process all expired entries between BEG and END.
@@ -283,21 +288,25 @@ to today's date.  With two `C-u' prefixes, prompt the user for to
 update the date."
   (interactive "P")
   (let* ((d (org-entry-get (point) org-expiry-created-property-name))
-	 d-time d-hour)
+	 d-time d-hour timestr)
     (when (or (null d) arg)
       ;; update if no date or non-nil prefix argument
       ;; FIXME Use `org-time-string-to-time' 
-      (setq d-time (if d (apply 'encode-time (org-parse-time-string d))
+      (setq d-time (if d (org-time-string-to-time d)
 		     (current-time)))
       (setq d-hour (format-time-string "%H:%M" d-time))
+      (setq timestr
+	    ;; two C-u prefixes will call org-read-date
+	    (if (equal arg '(16))
+		(concat "<" (org-read-date
+			     nil nil nil nil d-time d-hour) ">")
+	      (format-time-string (cdr org-time-stamp-formats))))
+      ;; maybe transform to inactive timestamp
+      (if org-expiry-inactive-timestamps
+	  (setq timestr (concat "[" (substring timestr 1 -1) "]")))
       (save-excursion
 	(org-entry-put
-	 (point) org-expiry-created-property-name
-	 ;; two C-u prefixes will call org-read-date
-	 (if (equal arg '(16))
-	     (concat "<" (org-read-date
-			  nil nil nil nil d-time d-hour) ">")
-	   (format-time-string (cdr org-time-stamp-formats))))))))
+	 (point) org-expiry-created-property-name timestr)))))
 
 (defun org-expiry-insert-expiry (&optional today)
   "Insert a property with the expiry date.
@@ -306,15 +315,20 @@ and insert today's date."
   (interactive "P")
   (let* ((d (org-entry-get (point) org-expiry-expiry-property-name))
 	 d-time d-hour)
-    (setq d-time (if d (apply 'encode-time (org-parse-time-string d))
+    (setq d-time (if d (org-time-string-to-time d)
 		   (current-time)))
     (setq d-hour (format-time-string "%H:%M" d-time))
+    (setq timestr (if today
+		      (format-time-string (cdr org-time-stamp-formats))
+		    (concat "<" (org-read-date
+				 nil nil nil nil d-time d-hour) ">")))
+    ;; maybe transform to inactive timestamp
+    (if org-expiry-inactive-timestamps
+	(setq timestr (concat "[" (substring timestr 1 -1) "]")))
+     
     (save-excursion
       (org-entry-put
-       (point) org-expiry-expiry-property-name
-       (if today (format-time-string (cdr org-time-stamp-formats))
-	 (concat "<" (org-read-date
-		      nil nil nil nil d-time d-hour) ">"))))))
+       (point) org-expiry-expiry-property-name timestr))))
 
 ;;; Functions to process expired entries:
 

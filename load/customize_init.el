@@ -6,12 +6,8 @@
 ;;(set-face-font 'default "-misc-inconsolata-medium-r-normal--*-*-0-0-p-0-iso8859-1")
 ;;(set-fontset-font "fontset-default" '(#x0000 . #xFFFFF) '("Inconsolata" . "unicode-bmp"))
 
-
-
 ;; save position in files
 ;; (setq-default save-place t)
-
-
 
 ;; (setq current-language-environment "English")
 ;;(setq current-language-environment "Russian")

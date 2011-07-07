@@ -1,10 +1,26 @@
 (require 'ecb)
-;(global-set-key (kbd "C-x C-a") 'ecb-activate)
-;(global-set-key (kbd "C-x C-q") 'ecb-deactivate)
-;(setq imenu-auto-rescan 1)
-;(custom-set-variables
- ;; '(display-default-dir-after-start (quote ("/home/ezo/dev")))
+(global-set-key (kbd "C-x C-a") 'ecb-activate)
+(global-set-key (kbd "C-x C-q") 'ecb-deactivate)
+(setq imenu-auto-rescan 1)
+(defvar start-dir (getenv "PWD"))
+(defvar start-dir-name (car (last (split-string start-dir "/"))))
+(setq ecb-source-path (quote ("~/develop" "~/develop/project_mebel")))
+(custom-set-variables
+ ;; '(display-default-dir-after-start (quote ("~/develop")))
  ;; '(display-default-dir-after-start (quote (pwd)))
+ '(ecb-tip-of-the-day nil)
+ '(ecb-layout-name "left14")
+ '(ecb-options-version "2.40")
+ '(ecb-layout-window-sizes (quote (("left14" (0.2564102564102564 . 0.6949152542372882) (0.2564102564102564 . 0.23728813559322035)))))
+ '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+ '(ecb-source-path (list (list start-dir start-dir-name)))
+ '(ecb-tip-of-the-day nil)
+ ;; '(ecb-tree-buffer-style (quote ascii-guides))
+ '(inhibit-startup-screen t)
+)
+ ;; 
+
+
 ; '(ecb-auto-activate nil)
 ; '(ecb-gzip-setup (quote cons))
 ; '(ecb-options-version "2.40")
@@ -13,6 +29,4 @@
 ; '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
 ; '(ecb-source-path (quote ("~/dev")))
 ; '(ecb-tar-setup (quote cons))
-; '(ecb-tip-of-the-day nil)
-; '(org-default-notes-file "~/org/notes")
-; '(org-directory "~/org"))
+

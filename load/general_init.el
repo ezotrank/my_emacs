@@ -39,7 +39,7 @@
  mouse-sel-retain-highlight t        ;; Keep mouse high-lightening
  current-language-environment "English"
  require-final-newline t             ;; _always_ require final newline
- undo-limit 40000                    ;; Set undo limit
+ undo-limit 4000                    ;; Set undo limit
  )
 
 (setq-default
@@ -58,12 +58,12 @@
 (require 'color-theme)
 (setq color-theme-is-global t)
 (color-theme-initialize)
-(color-theme-subtle-hacker)
+(color-theme-gray30)
 
-
+;; Don't need in console version
 (tool-bar-mode nil)           ;; Disable up toolbar
 (scroll-bar-mode nil)         ;; Disable vertical scroll bar
-(menu-bar-mode nil)           ;; Disable menu bar
+(menu-bar-mode nil)             ;; Disable menu bar
 
 ;to highlight ( and )
 (show-paren-mode t)
@@ -72,6 +72,13 @@
 
 ;Save emacs session when don't use session.el
 (desktop-save-mode t)
+
+;; Set a font
+(setq default-frame-alist '((font-backend . "xft")
+                            (font . "Inconsolata-11")
+                            (left-fringe . -1)
+                            (right-fringe . -1)
+                            ))
 
 ;Don't notify to kill buffer
 (defun kill-current-buffer ()

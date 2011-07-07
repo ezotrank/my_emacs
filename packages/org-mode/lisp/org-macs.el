@@ -1,12 +1,12 @@
 ;;; org-macs.el --- Top-level definitions for Org-mode
 
-;; Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009
+;; Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010
 ;;   Free Software Foundation, Inc.
 
 ;; Author: Carsten Dominik <carsten at orgmode dot org>
 ;; Keywords: outlines, hypermedia, calendar, wp
 ;; Homepage: http://orgmode.org
-;; Version: 6.33trans
+;; Version: 7.5
 ;;
 ;; This file is part of GNU Emacs.
 ;;
@@ -35,13 +35,48 @@
 
 (eval-and-compile
   (unless (fboundp 'declare-function)
-    (defmacro declare-function (fn file &optional arglist fileonly))))
+    (defmacro declare-function (fn file &optional arglist fileonly)))
+  (if (>= emacs-major-version 23)
+      (defsubst org-char-to-string(c)
+	"Defsubst to decode UTF-8 character values in emacs 23 and beyond."
+	(char-to-string c))
+    (defsubst org-char-to-string (c)
+      "Defsubst to decode UTF-8 character values in emacs 22."
+      (string (decode-char 'ucs c)))))
 
 (declare-function org-add-props "org-compat" (string plist &rest props))
+(declare-function org-string-match-p "org-compat" (&rest args))
+
+(defmacro org-called-interactively-p (&optional kind)
+  `(if (featurep 'xemacs)
+       (interactive-p)
+     (if (or (> emacs-major-version 23)
+	     (and (>= emacs-major-version 23)
+		  (>= emacs-minor-version 2)))
+	 (with-no-warnings (called-interactively-p ,kind)) ;; defined with no argument in <=23.1
+       (interactive-p))))
+
+(if (and (not (fboundp 'with-silent-modifications))
+	 (or (< emacs-major-version 23)
+	     (and (= emacs-major-version 23)
+		  (< emacs-minor-version 2))))
+    (defmacro with-silent-modifications (&rest body)
+      `(org-unmodified ,@body)))
 
 (defmacro org-bound-and-true-p (var)
   "Return the value of symbol VAR if it is bound, else nil."
   `(and (boundp (quote ,var)) ,var))
+
+(defun org-string-nw-p (s)
+  "Is S a string with a non-white character?"
+  (and (stringp s)
+       (org-string-match-p "\\S-" s)
+       s))
+
+(defun org-not-nil (v)
+  "If V not nil, and also not the string \"nil\", then return V.
+Otherwise return nil."
+  (and v (not (equal v "nil")) v))
 
 (defmacro org-unmodified (&rest body)
   "Execute body without changing `buffer-modified-p'.
@@ -87,7 +122,7 @@ Also, do not record undo information."
 
 (defmacro org-maybe-intangible (props)
   "Add '(intangible t) to PROPS if Emacs version is earlier than Emacs 22.
-In emacs 21, invisible text is not avoided by the command loop, so the
+In Emacs 21, invisible text is not avoided by the command loop, so the
 intangible property is needed to make sure point skips this text.
 In Emacs 22, this is not necessary.  The intangible text property has
 led to problems with flyspell.  These problems are fixed in flyspell.el,
@@ -99,11 +134,12 @@ We use a macro so that the test can happen at compilation time."
 
 (defmacro org-with-point-at (pom &rest body)
   "Move to buffer and point of point-or-marker POM for the duration of BODY."
-  `(save-excursion
-     (if (markerp ,pom) (set-buffer (marker-buffer ,pom)))
+  `(let ((pom ,pom))
      (save-excursion
-       (goto-char (or ,pom (point)))
-       ,@body)))
+       (if (markerp pom) (set-buffer (marker-buffer pom)))
+       (save-excursion
+	 (goto-char (or pom (point)))
+	 ,@body))))
 (put 'org-with-point-at 'lisp-indent-function 1)
 
 (defmacro org-no-warnings (&rest body)
@@ -156,13 +192,15 @@ We use a macro so that the test can happen at compilation time."
 	 ;; remember which buffer to undo
 	 (push (list _cmd _cline _buf1 _c1 _buf2 _c2)
 	       org-agenda-undo-list)))))
+(put 'org-with-remote-undo 'lisp-indent-function 1)
 
 (defmacro org-no-read-only (&rest body)
   "Inhibit read-only for BODY."
   `(let ((inhibit-read-only t)) ,@body))
 
 (defconst org-rm-props '(invisible t face t keymap t intangible t mouse-face t
-				   rear-nonsticky t mouse-map t fontified t)
+				   rear-nonsticky t mouse-map t fontified t
+				   org-emphasis t)
   "Properties to remove when a string without properties is wanted.")
 
 (defsubst org-match-string-no-properties (num &optional string)
@@ -270,13 +308,40 @@ This is in contrast to merely setting it to 0."
       (setq plist (cddr plist)))
     p))
 
-
 (defun org-replace-match-keep-properties (newtext &optional fixedcase
 						  literal string)
   "Like `replace-match', but add the text properties found original text."
   (setq newtext (org-add-props newtext (text-properties-at
 					(match-beginning 0) string)))
   (replace-match newtext fixedcase literal string))
+
+(defmacro org-save-outline-visibility (use-markers &rest body)
+  "Save and restore outline visibility around BODY.
+If USE-MARKERS is non-nil, use markers for the positions.
+This means that the buffer may change while running BODY,
+but it also means that the buffer should stay alive
+during the operation, because otherwise all these markers will
+point nowhere."
+  (declare (indent 1))
+  `(let ((data (org-outline-overlay-data ,use-markers))
+	 rtn)
+     (unwind-protect
+	 (progn
+	   (setq rtn (progn ,@body))
+	   (org-set-outline-overlay-data data))
+       (when ,use-markers
+	 (mapc (lambda (c)
+		 (and (markerp (car c)) (move-marker (car c) nil))
+		 (and (markerp (cdr c)) (move-marker (cdr c) nil)))
+	       data)))
+     rtn))
+
+(defmacro org-with-wide-buffer (&rest body)
+ "Execute body while temporarily widening the buffer."
+ `(save-excursion
+    (save-restriction
+       (widen)
+       ,@body)))
 
 (defmacro org-with-limited-levels (&rest body)
   "Execute BODY with limited number of outline levels."
@@ -287,9 +352,8 @@ This is in contrast to merely setting it to 0."
 (defvar org-inlinetask-min-level) ; defined in org-inlinetask.el
 (defun org-get-limited-outline-regexp ()
   "Return outline-regexp with limited number of levels.
-The number of levels is controlled by "
+The number of levels is controlled by `org-inlinetask-min-level'"
   (if (or (not (org-mode-p)) (not (featurep 'org-inlinetask)))
-
       outline-regexp
     (let* ((limit-level (1- org-inlinetask-min-level))
 	   (nstars (if org-odd-levels-only (1- (* limit-level 2)) limit-level)))

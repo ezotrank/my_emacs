@@ -2,13 +2,21 @@
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-(custom-set-variables
- '(org-directory "~/org")
- '(org-default-notes-file "~/org/notes")
- )
+;; (custom-set-variables
+;;  '(org-directory "~/org")
+;;  '(org-default-notes-file "~/org/notes")
+;;  )
 
 (setq org-agenda-files
-      (list "~/org/agenda.org" "~/org/personal.org" "~/org/klondaik.org"))
+      (list "~/org/todos.org" 
+            "~/org/alisa_comments.org"
+            "~/home/ezo/org/notes.org"))
+
+;; logging stuff
+(setq org-log-done (quote time))
+(setq org-log-into-drawer nil)
+(setq org-log-redeadline (quote note))
+(setq org-log-reschedule (quote time))
 
 
 ;; To save the clock history across Emacs sessions

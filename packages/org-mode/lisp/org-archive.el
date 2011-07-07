@@ -1,12 +1,12 @@
 ;;; org-archive.el --- Archiving for Org-mode
 
-;; Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009
+;; Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010
 ;;   Free Software Foundation, Inc.
 
 ;; Author: Carsten Dominik <carsten at orgmode dot org>
 ;; Keywords: outlines, hypermedia, calendar, wp
 ;; Homepage: http://orgmode.org
-;; Version: 6.33trans
+;; Version: 7.5
 ;;
 ;; This file is part of GNU Emacs.
 ;;
@@ -40,7 +40,12 @@
   :type '(choice
 	  (const org-archive-subtree)
 	  (const org-archive-to-archive-sibling)
-	  (const org-archive-set-tag)))  
+	  (const org-archive-set-tag)))
+
+(defcustom org-archive-reversed-order nil
+  "Non-nil means make the tree first child under the archive heading, not last."
+  :group 'org-archive
+  :type 'boolean)
 
 (defcustom org-archive-sibling-heading "Archive"
   "Name of the local archive sibling that is used to archive entries locally.
@@ -50,7 +55,7 @@ See `org-archive-to-archive-sibling' for more information."
   :type 'string)
 
 (defcustom org-archive-mark-done nil
-  "Non-nil means, mark entries as DONE when they are moved to the archive file.
+  "Non-nil means mark entries as DONE when they are moved to the archive file.
 This can be a string to set the keyword to use.  When t, Org-mode will
 use the first keyword in its list that means done."
   :group 'org-archive
@@ -60,11 +65,19 @@ use the first keyword in its list that means done."
 	  (string :tag "Use this keyword")))
 
 (defcustom org-archive-stamp-time t
-  "Non-nil means, add a time stamp to entries moved to an archive file.
+  "Non-nil means add a time stamp to entries moved to an archive file.
 This variable is obsolete and has no effect anymore, instead add or remove
 `time' from the variable `org-archive-save-context-info'."
   :group 'org-archive
   :type 'boolean)
+
+(defcustom org-archive-subtree-add-inherited-tags 'infile
+  "Non-nil means append inherited tags when archiving a subtree."
+  :group 'org-archive
+  :type '(choice
+	  (const :tag "Never" nil)
+	  (const :tag "When archiving a subtree to the same file" infile)
+	  (const :tag "Always" t)))
 
 (defcustom org-archive-save-context-info '(time file olpath category todo itags)
   "Parts of context info that should be stored as properties when archiving.
@@ -83,7 +96,7 @@ olpath     The outline path to the item.  These are all headlines above
            the current item, separated by /, like a file path.
 
 For each symbol present in the list, a property will be created in
-the archived entry, with a prefix \"PRE_ARCHIVE_\", to remember this
+the archived entry, with a prefix \"ARCHIVE_\", to remember this
 information."
   :group 'org-archive
   :type '(set :greedy t
@@ -110,7 +123,7 @@ information."
 	 ((or (re-search-backward re nil t)
 	      (re-search-forward re nil t))
 	  (match-string 1))
-	 (t org-archive-location (match-string 1)))))))
+	 (t org-archive-location))))))
 
 (defun org-add-archive-files (files)
   "Splice the archive files into the list of files.
@@ -196,14 +209,15 @@ this heading."
 	  (time (format-time-string
 		 (substring (cdr org-time-stamp-formats) 1 -1)
 		 (current-time)))
-	  category todo priority ltags itags
+	  category todo priority ltags itags atags
           ;; end of variables that will be used for saving context
-	  location afile heading buffer level newfile-p visiting)
+	  location afile heading buffer level newfile-p infile-p visiting)
 
       ;; Find the local archive location
       (setq location (org-get-local-archive-location)
 	    afile (org-extract-archive-file location)
-	    heading (org-extract-archive-heading location))
+	    heading (org-extract-archive-heading location)
+	    infile-p (equal file (abbreviate-file-name afile)))
       (unless afile
 	(error "Invalid `org-archive-location'"))
 
@@ -221,14 +235,14 @@ this heading."
       (save-excursion
 	(org-back-to-heading t)
 	;; Get context information that will be lost by moving the tree
-	(org-refresh-category-properties)
-	(setq category (org-get-category)
+	(setq category (org-get-category nil 'force-refresh)
 	      todo (and (looking-at org-todo-line-regexp)
 			(match-string 2))
 	      priority (org-get-priority
 			(if (match-end 3) (match-string 3) ""))
 	      ltags (org-get-tags)
-	      itags (org-delete-all ltags (org-get-tags-at)))
+	      itags (org-delete-all ltags (org-get-tags-at))
+	      atags (org-get-tags-at))
 	(setq ltags (mapconcat 'identity ltags " ")
 	      itags (mapconcat 'identity itags " "))
 	;; We first only copy, in case something goes wrong
@@ -263,7 +277,7 @@ this heading."
 	      (progn
 		(if (re-search-forward
 		     (concat "^" (regexp-quote heading)
-			     (org-re "[ \t]*\\(:[[:alnum:]_@:]+:\\)?[ \t]*\\($\\|\r\\)"))
+			     (org-re "[ \t]*\\(:[[:alnum:]_@#%:]+:\\)?[ \t]*\\($\\|\r\\)"))
 		     nil t)
 		    (goto-char (match-end 0))
 		  ;; Heading not found, just insert it at the end
@@ -273,7 +287,11 @@ this heading."
 		  (end-of-line 0))
 		;; Make the subtree visible
 		(show-subtree)
-		(org-end-of-subtree t)
+		(if org-archive-reversed-order
+		    (progn
+		      (org-back-to-heading t)
+		      (outline-next-heading))
+		  (org-end-of-subtree t))
 		(skip-chars-backward " \t\r\n")
 		(and (looking-at "[ \t\r\n]*")
 		     (replace-match "\n\n")))
@@ -281,7 +299,12 @@ this heading."
 	    (goto-char (point-max)) (insert "\n"))
 	  ;; Paste
 	  (org-paste-subtree (org-get-valid-level level (and heading 1)))
-
+	  ;; Shall we append inherited tags?
+	  (and itags
+	       (or (and (eq org-archive-subtree-add-inherited-tags 'infile) 
+			infile-p)
+		   (eq org-archive-subtree-add-inherited-tags t))
+	       (org-set-tags-to atags))
 	  ;; Mark the entry as done
 	  (when (and org-archive-mark-done
 		     (looking-at org-todo-line-regexp)
@@ -355,7 +378,9 @@ sibling does not exist, it will be created at the end of the subtree."
 	(beginning-of-line 0)
 	(org-toggle-tag org-archive-tag 'on))
       (beginning-of-line 1)
-      (org-end-of-subtree t t)
+      (if org-archive-reversed-order
+	  (outline-next-heading)
+	(org-end-of-subtree t t))
       (save-excursion
 	(goto-char pos)
 	(let ((this-command this-command)) (org-cut-subtree)))

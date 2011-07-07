@@ -147,7 +147,7 @@ leave this to the environment variables outside of Emacs.")
       dir
     (let ((new-dir (expand-file-name (file-name-as-directory "..") dir)))
       ;; regexp to match windows roots, tramp roots, or regular posix roots
-      (unless (string-match "\\(^[[:alpha:]]:/$\\|^/[^\/]+:\\|^/$\\)" dir)
+      (unless (string-match "\\(^[[:alpha:]]:/$\\|^/[^\/]+:/?$\\|^/$\\)" dir)
 	(rinari-root new-dir)))))
 
 ;;--------------------------------------------------------------------------------
@@ -212,17 +212,28 @@ argument allows editing of the test command arguments."
       (message "no test available"))))
 
 (defun rinari-console (&optional edit-cmd-args)
-  "Run script/console in a compilation buffer, with command
-history and links between errors and source code.  With optional
-prefix argument allows editing of the console command arguments."
+  "Runs a Rails console in a compilation buffer, with command history
+and links between errors and source code.  With optional prefix
+argument allows editing of the console command arguments."
   (interactive "P")
-  (let* ((script ;; (concat (rinari-root) "script/console")
-	  (concat (expand-file-name "console" (file-name-as-directory
-					       (expand-file-name "script" (rinari-root))))
-		  (if rinari-rails-env (concat " " rinari-rails-env))))
-	 (command (if edit-cmd-args
-			      (read-string "Run Ruby: " (concat script " "))
-			    script)))
+  (let* ((default-directory (rinari-root))
+         (script (rinari-script-path))
+         (command
+          (expand-file-name
+           (if (file-exists-p (expand-file-name "console" script))
+               "console"
+             "rails console")
+           script)))
+
+    ;; Start console in correct environment.
+    (if rinari-rails-env
+        (setq command (concat command " " rinari-rails-env)))
+
+    ;; For customization of the console command with prefix arg.
+    (setq command (if edit-cmd-args
+                      (read-string "Run Ruby: " (concat command " "))
+                    command))
+
     (run-ruby command)
     (save-excursion
       (set-buffer "*ruby*")
@@ -259,24 +270,50 @@ from your conf/database.sql file."
 	       (server (or (cdr (assoc "host" database-alist)) "localhost"))
 	       (port (cdr (assoc "port" database-alist)))
 	       (sql-server (if port (concat server ":" port) server)))
-	  (if (string-match "sqlite" adapter) (setf adapter "sqlite"))
+	  (cond ((string-match "mysql" adapter) 
+		 (setf adapter "mysql"))
+                ((string-match "sqlite" adapter) 
+		 (setf adapter "sqlite"))
+		((string-match "postgresql" adapter) 
+		 (setf adapter "postgres")))
 	  (eval (list (intern (concat "sql-" adapter))))
 	  (rename-buffer (sql-name environment)) (rinari-launch))))))
 
 (defun rinari-web-server (&optional edit-cmd-args)
-  "Run script/server.  Dump output to a compilation buffer
-allowing jumping between errors and source code.  With optional
-prefix argument allows editing of the server command arguments."
+  "Starts a Rails webserver.  Dumps output to a compilation buffer
+allowing jumping between errors and source code.  With optional prefix
+argument allows editing of the server command arguments."
   (interactive "P")
   (let* ((default-directory (rinari-root))
-	 (script (concat (expand-file-name "server"
-					   (file-name-as-directory
-					    (expand-file-name "script" (rinari-root))))
-			 (if rinari-rails-env (concat " -e " rinari-rails-env))))
-	 (command (if edit-cmd-args
-		      (read-string "Run Ruby: " (concat script " "))
-		    script)))
-    (ruby-compilation-run command)) (rinari-launch))
+         (script (rinari-script-path))
+         (command
+          (expand-file-name
+           (if (file-exists-p (expand-file-name "server" script))
+               "server"
+             "rails server")
+           script)))
+
+    ;; Start web server in correct environment.
+    ;; NOTE: Rails 3 has a bug and does not start in any environment but development for now.
+    (if rinari-rails-env
+        (setq command (concat command " -e " rinari-rails-env)))
+
+    ;; For customization of the web server command with prefix arg.
+    (setq command (if edit-cmd-args
+                      (read-string "Run Ruby: " (concat command " "))
+                    command))
+
+    (ruby-compilation-run command))
+  (rinari-launch))
+
+(defun rinari-web-server-restart (&optional edit-cmd-args)
+  "If rinari-web-server is running, kill it and start a new server, otherwise just launch the server"
+  (interactive "P")
+  (let ((rinari-web-server-buffer "*server*"))
+    (when (get-buffer rinari-web-server-buffer)
+      (set-process-query-on-exit-flag (get-buffer-process rinari-web-server-buffer) nil)
+      (kill-buffer rinari-web-server-buffer))
+    (rinari-web-server edit-cmd-args)))
 
 (defun rinari-insert-erb-skeleton (no-equals)
   "Insert an erb skeleton at point, with optional prefix argument
@@ -355,13 +392,23 @@ With optional prefix argument just run `rgrep'."
                (match-string 1 path))))
     ending))
 
+(defun rinari-script-path ()
+  "Returns the absolute path to the script folder."
+  (concat (file-name-as-directory (expand-file-name "script" (rinari-root)))))
+
 ;;--------------------------------------------------------------------
 ;; rinari movement using jump.el
 
 (defun rinari-generate (type name)
-  (message (shell-command-to-string
-	    (format "ruby %sscript/generate %s %s" (rinari-root) type
-		    (read-from-minibuffer (format "create %s: " type) name)))))
+  (let* ((default-directory (rinari-root))
+         (script (rinari-script-path))
+         (command
+          (expand-file-name
+           (if (file-exists-p (expand-file-name "generate" script))
+               "generate"
+             "rails generate")
+           script)))
+    (message (shell-command-to-string (concat command " " type " " (read-from-minibuffer (format "create %s: " type) name))))))
 
 (defvar rinari-ruby-hash-regexp
   "\\(:[^[:space:]]*?\\)[[:space:]]*\\(=>[[:space:]]*[\"\':]?\\([^[:space:]]*?\\)[\"\']?[[:space:]]*\\)?[,){}\n]"
@@ -580,6 +627,7 @@ renders and redirects to find the final controller or view."
 		       (and (string-match ".*/\\(.+?\\)_cell\.rb" path)
 			    (match-string 1 path)))))
    (environment "e" ((t . "config/environments/")) nil)
+   (application "a" ((t . "config/application.rb")) nil)
    (configuration "n" ((t . "config/")) nil)
    (script "s" ((t . "script/")) nil)
    (lib "l" ((t . "lib/")) nil)
@@ -591,7 +639,7 @@ renders and redirects to find the final controller or view."
               (t . "app/stylesheets/.*")) nil)
    (javascript "j" ((t . "public/javascripts/.*")) nil)
    (plugin "u" ((t . "vendor/plugins/")) nil)
-   (metal "M" ((t . "app/metal/")) nil)
+   (mailer "M" ((t . "app/mailers/")) nil)
    (file-in-project "f" ((t . ".*")) nil)
    (by-context
     ";"

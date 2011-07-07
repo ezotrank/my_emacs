@@ -57,7 +57,7 @@
 ;;
 ;; 3) If the TRIGGER property contains any other words like
 ;;    XYZ(KEYWORD), these are treated as entry id's with keywords.  That
-;;    means, Org-mode will search for an entry with the ID property XYZ
+;;    means Org-mode will search for an entry with the ID property XYZ
 ;;    and switch that entry to KEYWORD as well.
 ;;
 ;; Blocking
@@ -69,7 +69,7 @@
 ;;    state, the current state change is blocked.
 ;;
 ;; 2) If the BLOCKER property contains any other words, these are
-;;    treated as entry id's.  That means, Org-mode will search for an
+;;    treated as entry id's.  That means Org-mode will search for an
 ;;    entry with the ID property exactly equal to this word.  If any
 ;;    of these entries is not yet marked DONE, the current state change
 ;;    will be blocked.
@@ -224,12 +224,13 @@ this ID property, that entry is also checked."
 	 blocker blockers bl p1
 	 (proceed-p
 	  (catch 'return
-	    (unless (eq type 'todo-state-change)
-	      ;; We are not handling this kind of change
-	      (throw 'return t))
-	    (unless (and (not from) (member to org-not-done-keywords))
-	      ;; This is not a change from nothing to TODO, ignore it
-	      (throw 'return t))
+            ;; If this is not a todo state change, or if this entry is
+            ;; DONE, do not block
+            (when (or (not (eq type 'todo-state-change))
+                      (member from (cons 'done org-done-keywords))
+                      (member to (cons 'todo org-not-done-keywords))
+                      (not to))
+              (throw 'return t))
 
 	    ;; OK, the plan is to switch from nothing to TODO
 	    ;; Lets see if we will allow it.  Find the BLOCKER property

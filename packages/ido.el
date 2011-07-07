@@ -1,7 +1,6 @@
-;;; ido.el --- interactively do things with buffers and files.
+;;; ido.el --- interactively do things with buffers and files
 
-;; Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-;;   2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+;; Copyright (C) 1996-2011 Free Software Foundation, Inc.
 
 ;; Author: Kim F. Storm <storm@cua.dk>
 ;; Based on: iswitchb by Stephen Eglen <stephen@cns.ed.ac.uk>
@@ -322,7 +321,7 @@
 
 ;;; Code:
 
-(defvar cua-inhibit-cua-keys)
+(defvar recentf-list)
 
 ;;; User Variables
 ;;
@@ -351,7 +350,7 @@ should be enabled.  The following values are possible:
 
 Setting this variable directly does not take effect;
 use either \\[customize] or the function `ido-mode'."
-  :set #'(lambda (symbol value)
+  :set #'(lambda (_symbol value)
 	   (ido-mode value))
   :initialize 'custom-initialize-default
   :require 'ido
@@ -364,16 +363,6 @@ use either \\[customize] or the function `ido-mode'."
                  (const :tag "Turn on only file" file)
                  (const :tag "Turn on both buffer and file" both)
                  (const :tag "Switch off all" nil))
-  :group 'ido)
-
-(defcustom ido-everywhere nil
-  "Use ido everywhere for reading file names and directories.
-Setting this variable directly does not work.  Use `customize' or
-call the function `ido-everywhere'."
-  :set #'(lambda (symbol value)
-	   (ido-everywhere (if value 1 -1)))
-  :initialize 'custom-initialize-default
-  :type 'boolean
   :group 'ido)
 
 (defcustom ido-case-fold case-fold-search
@@ -768,9 +757,9 @@ Obsolete.  Set 3rd element of `ido-decorations' instead."
   :type '(choice string (const nil))
   :group 'ido)
 
-(defcustom ido-decorations '( "{" "}" " | " " | ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]")
+(defcustom ido-decorations '( "{" "}" " | " " | ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")
   "List of strings used by ido to display the alternatives in the minibuffer.
-There are 10 elements in this list:
+There are 11 elements in this list:
 1st and 2nd elements are used as brackets around the prospect list,
 3rd element is the separator between prospects (ignored if `ido-separator' is set),
 4th element is the string inserted at the end of a truncated list of prospects,
@@ -779,8 +768,27 @@ can be completed using TAB,
 7th element is the string displayed when there are no matches, and
 8th element is displayed if there is a single match (and faces are not used),
 9th element is displayed when the current directory is non-readable,
-10th element is displayed when directory exceeds `ido-max-directory-size'."
+10th element is displayed when directory exceeds `ido-max-directory-size',
+11th element is displayed to confirm creating new file or buffer."
   :type '(repeat string)
+  :group 'ido)
+
+(defcustom ido-use-virtual-buffers nil
+  "If non-nil, refer to past buffers as well as existing ones.
+Essentially it works as follows: Say you are visiting a file and
+the buffer gets cleaned up by mignight.el.  Later, you want to
+switch to that buffer, but find it's no longer open.  With
+virtual buffers enabled, the buffer name stays in the buffer
+list (using the `ido-virtual' face, and always at the end), and if
+you select it, it opens the file back up again.  This allows you
+to think less about whether recently opened files are still open
+or not.  Most of the time you can quit Emacs, restart, and then
+switch to a file buffer that was previously open as if it still
+were.
+    This feature relies upon the `recentf' package, which will be
+enabled if this variable is configured to a non-nil value."
+  :version "24.1"
+  :type 'boolean
   :group 'ido)
 
 (defcustom ido-use-faces t
@@ -805,6 +813,11 @@ subdirs in the alternatives."
                              (:foreground "red"))
                             (t (:underline t)))
   "Face used by ido for highlighting subdirs in the alternatives."
+  :group 'ido)
+
+(defface ido-virtual '((t (:inherit font-lock-builtin-face)))
+  "Face used by ido for matching virtual buffer names."
+  :version "24.1"
   :group 'ido)
 
 (defface ido-indicator  '((((min-colors 88) (class color))
@@ -1039,6 +1052,11 @@ so that it doesn't interfere with other minibuffer usage.")
   "Non-nil means to explicitly cursor on entry to minibuffer.
 Value is an integer which is number of chars to right of prompt.")
 
+(defvar ido-virtual-buffers nil
+  "List of virtual buffers, that is, past visited files.
+This is a copy of `recentf-list', pared down and with faces applied.
+Only used if `ido-use-virtual-buffers' is non-nil.")
+
 ;;; Variables with dynamic bindings.
 ;;; Declared here to keep the byte compiler quiet.
 
@@ -1082,6 +1100,9 @@ Value is an integer which is number of chars to right of prompt.")
 ;; Non-nil if matching file must be selected.
 (defvar ido-require-match)
 
+;; Non-nil if we should add [confirm] to prompt
+(defvar ido-show-confirm-message)
+
 ;; Stores a temporary version of the file list being created.
 (defvar ido-temp-list)
 
@@ -1112,6 +1133,9 @@ Value is an integer which is number of chars to right of prompt.")
 
 ;; Set to 'ignore to inhibit switching between find-file/switch-buffer.
 (defvar ido-context-switch-command)
+
+;; Dynamically bound in ido-read-internal.
+(defvar ido-completing-read)
 
 ;;; FUNCTIONS
 
@@ -1267,8 +1291,6 @@ Value is an integer which is number of chars to right of prompt.")
 (defun ido-may-cache-directory (&optional dir)
   (setq dir (or dir ido-current-directory))
   (cond
-   ((ido-directory-too-big-p dir)
-    nil)
    ((and (ido-is-root-directory dir)
 	 (or ido-enable-tramp-completion
 	     (memq system-type '(windows-nt ms-dos))))
@@ -1277,6 +1299,8 @@ Value is an integer which is number of chars to right of prompt.")
     (ido-cache-unc-valid))
    ((ido-is-ftp-directory dir)
     (ido-cache-ftp-valid))
+   ((ido-directory-too-big-p dir)
+    nil)
    (t t)))
 
 (defun ido-pp (list &optional sep)
@@ -1445,12 +1469,36 @@ Removes badly formatted data and ignored directories."
   ;; ido kill emacs hook
   (ido-save-history))
 
+(defun ido-common-initialization ()
+  (ido-init-completion-maps)
+  (add-hook 'minibuffer-setup-hook 'ido-minibuffer-setup)
+  (add-hook 'choose-completion-string-functions 'ido-choose-completion-string))
+
+(define-minor-mode ido-everywhere
+  "Toggle using ido-mode everywhere file and directory names are read.
+With ARG, turn ido-mode on if arg is positive, off otherwise."
+  :global t
+  :group 'ido
+  (when (get 'ido-everywhere 'file)
+    (setq read-file-name-function (car (get 'ido-everywhere 'file)))
+    (put 'ido-everywhere 'file nil))
+  (when (get 'ido-everywhere 'buffer)
+    (setq read-buffer-function (car (get 'ido-everywhere 'buffer)))
+    (put 'ido-everywhere 'buffer nil))
+  (when ido-everywhere
+    (when (memq ido-mode '(both file))
+      (put 'ido-everywhere 'file (cons read-file-name-function nil))
+      (setq read-file-name-function 'ido-read-file-name))
+    (when (memq ido-mode '(both buffer))
+      (put 'ido-everywhere 'buffer (cons read-buffer-function nil))
+      (setq read-buffer-function 'ido-read-buffer))))
+
 (defvar ido-minor-mode-map-entry nil)
 
 ;;;###autoload
 (defun ido-mode (&optional arg)
-  "Toggle ido speed-ups on or off.
-With ARG, turn ido speed-up on if arg is positive, off otherwise.
+  "Toggle ido mode on or off.
+With ARG, turn ido-mode on if arg is positive, off otherwise.
 Turning on ido-mode will remap (via a minor-mode keymap) the default
 keybindings for the `find-file' and `switch-to-buffer' families of
 commands to the ido versions of these functions.
@@ -1469,12 +1517,9 @@ This function also adds a hook to the minibuffer."
 	 (t nil)))
 
   (ido-everywhere (if ido-everywhere 1 -1))
-  (when ido-mode
-    (ido-init-completion-maps))
 
   (when ido-mode
-    (add-hook 'minibuffer-setup-hook 'ido-minibuffer-setup)
-    (add-hook 'choose-completion-string-functions 'ido-choose-completion-string)
+    (ido-common-initialization)
     (ido-load-history)
 
     (add-hook 'kill-emacs-hook 'ido-kill-emacs-hook)
@@ -1488,15 +1533,21 @@ This function also adds a hook to the minibuffer."
 	(define-key map [remap insert-file] 'ido-insert-file)
 	(define-key map [remap list-directory] 'ido-list-directory)
 	(define-key map [remap dired] 'ido-dired)
-	(define-key map [remap find-file-other-window] 'ido-find-file-other-window)
-	(define-key map [remap find-file-read-only-other-window] 'ido-find-file-read-only-other-window)
-	(define-key map [remap find-file-other-frame] 'ido-find-file-other-frame)
-	(define-key map [remap find-file-read-only-other-frame] 'ido-find-file-read-only-other-frame))
+	(define-key map [remap find-file-other-window]
+          'ido-find-file-other-window)
+	(define-key map [remap find-file-read-only-other-window]
+          'ido-find-file-read-only-other-window)
+	(define-key map [remap find-file-other-frame]
+          'ido-find-file-other-frame)
+	(define-key map [remap find-file-read-only-other-frame]
+          'ido-find-file-read-only-other-frame))
 
       (when (memq ido-mode '(buffer both))
 	(define-key map [remap switch-to-buffer] 'ido-switch-buffer)
-	(define-key map [remap switch-to-buffer-other-window] 'ido-switch-buffer-other-window)
-	(define-key map [remap switch-to-buffer-other-frame] 'ido-switch-buffer-other-frame)
+	(define-key map [remap switch-to-buffer-other-window]
+          'ido-switch-buffer-other-window)
+	(define-key map [remap switch-to-buffer-other-frame]
+          'ido-switch-buffer-other-frame)
 	(define-key map [remap insert-buffer] 'ido-insert-buffer)
 	(define-key map [remap kill-buffer] 'ido-kill-buffer)
 	(define-key map [remap display-buffer] 'ido-display-buffer))
@@ -1507,28 +1558,6 @@ This function also adds a hook to the minibuffer."
 	(add-to-list 'minor-mode-map-alist ido-minor-mode-map-entry))))
 
   (message "Ido mode %s" (if ido-mode "enabled" "disabled")))
-
-
-(defun ido-everywhere (arg)
-  "Toggle using ido speed-ups everywhere file and directory names are read.
-With ARG, turn ido speed-up on if arg is positive, off otherwise."
-  (interactive "P")
-  (setq ido-everywhere (if arg
-			   (> (prefix-numeric-value arg) 0)
-			 (not ido-everywhere)))
-  (when (get 'ido-everywhere 'file)
-    (setq read-file-name-function (car (get 'ido-everywhere 'file)))
-    (put 'ido-everywhere 'file nil))
-  (when (get 'ido-everywhere 'buffer)
-    (setq read-buffer-function (car (get 'ido-everywhere 'buffer)))
-    (put 'ido-everywhere 'buffer nil))
-  (when ido-everywhere
-    (when (memq ido-mode '(both file))
-      (put 'ido-everywhere 'file (cons read-file-name-function nil))
-      (setq read-file-name-function 'ido-read-file-name))
-    (when (memq ido-mode '(both buffer))
-      (put 'ido-everywhere 'buffer (cons read-buffer-function nil))
-      (setq read-buffer-function 'ido-read-buffer))))
 
 
 ;;; IDO KEYMAP
@@ -1598,7 +1627,6 @@ With ARG, turn ido speed-up on if arg is positive, off otherwise."
     (define-key map "\C-o" 'ido-copy-current-word)
     (define-key map "\C-w" 'ido-copy-current-file-name)
     (define-key map [(meta ?l)] 'ido-toggle-literal)
-    (define-key map "\C-v" 'ido-toggle-vc)
     (set-keymap-parent map ido-file-dir-completion-map)
     (setq ido-file-completion-map map))
 
@@ -1607,6 +1635,7 @@ With ARG, turn ido speed-up on if arg is positive, off otherwise."
     (define-key map "\C-x\C-f" 'ido-enter-find-file)
     (define-key map "\C-x\C-b" 'ido-fallback-command)
     (define-key map "\C-k" 'ido-kill-buffer-at-head)
+    (define-key map "\C-o" 'ido-toggle-virtual-buffers)
     (set-keymap-parent map ido-common-completion-map)
     (setq ido-buffer-completion-map map)))
 
@@ -1803,10 +1832,6 @@ PROMPT is the prompt to give to the user.
 DEFAULT if given is the default item to start with.
 If REQUIRE-MATCH is non-nil, an existing file must be selected.
 If INITIAL is non-nil, it specifies the initial input string."
-  ;; Ido does not implement the `confirm' and
-  ;; `confirm-after-completion' values of REQUIRE-MATCH.
-  (if (memq require-match '(confirm confirm-after-completion))
-      (setq require-match nil))
   (let
       ((ido-cur-item item)
        (ido-entry-buffer (current-buffer))
@@ -1829,6 +1854,7 @@ If INITIAL is non-nil, it specifies the initial input string."
        (ido-case-fold ido-case-fold)
        (ido-enable-prefix ido-enable-prefix)
        (ido-enable-regexp ido-enable-regexp)
+       (ido-show-confirm-message nil)
        )
 
     (ido-setup-completion-map)
@@ -1941,31 +1967,24 @@ If INITIAL is non-nil, it specifies the initial input string."
       (ido-set-matches)
       (if (and ido-matches (eq ido-try-merged-list 'auto))
 	  (setq ido-try-merged-list t))
-      (let
-	  ((minibuffer-local-completion-map
-	    (if (memq ido-cur-item '(file dir))
-		minibuffer-local-completion-map
-	      ido-completion-map))
-	   (minibuffer-local-filename-completion-map
-	    (if (memq ido-cur-item '(file dir))
-		ido-completion-map
-	      minibuffer-local-filename-completion-map))
-	   (max-mini-window-height (or ido-max-window-height
-				       (and (boundp 'max-mini-window-height) max-mini-window-height)))
+      (let ((max-mini-window-height (or ido-max-window-height
+					(and (boundp 'max-mini-window-height)
+					     max-mini-window-height)))
 	   (ido-completing-read t)
 	   (ido-require-match require-match)
 	   (ido-use-mycompletion-depth (1+ (minibuffer-depth)))
-	   (show-paren-mode nil))
+	   (show-paren-mode nil)
+	   ;; Postpone history adding till later
+	   (history-add-new-input nil))
 	;; prompt the user for the file name
 	(setq ido-exit nil)
 	(setq ido-final-text
 	      (catch 'ido
-		(completing-read
-		 (ido-make-prompt item prompt)
-		 '(("dummy" . 1)) nil nil ; table predicate require-match
-		 (prog1 ido-text-init (setq ido-text-init nil))	;initial-contents
-		 history))))
-      (ido-trace "completing-read" ido-final-text)
+		(read-from-minibuffer (ido-make-prompt item prompt)
+				      (prog1 ido-text-init
+					(setq ido-text-init nil))
+				      ido-completion-map nil history))))
+      (ido-trace "read-from-minibuffer" ido-final-text)
       (if (get-buffer ido-completion-buffer)
 	  (kill-buffer ido-completion-buffer))
 
@@ -2067,6 +2086,7 @@ If INITIAL is non-nil, it specifies the initial input string."
 
        ;; Handling the require-match must be done in a better way.
        ((and require-match
+	     (not (memq require-match '(confirm confirm-after-completion)))
 	     (not (if ido-directory-too-big
 		      (file-exists-p (concat ido-current-directory ido-final-text))
 		    (ido-existing-item-p))))
@@ -2134,6 +2154,7 @@ If INITIAL is non-nil, it specifies the initial input string."
 
 	 (t
 	  (setq done t))))))
+    (add-to-history (or history 'minibuffer-history) ido-selected)
     ido-selected))
 
 (defun ido-edit-input ()
@@ -2158,7 +2179,11 @@ If cursor is not at the end of the user input, move to end of input."
 	   (ido-current-directory nil)
 	   (ido-directory-nonreadable nil)
 	   (ido-directory-too-big nil)
-	   (buf (ido-read-internal 'buffer (or prompt "Buffer: ") 'ido-buffer-history default nil initial)))
+	   (ido-use-virtual-buffers ido-use-virtual-buffers)
+	   (require-match (confirm-nonexistent-file-or-buffer))
+	   (buf (ido-read-internal 'buffer (or prompt "Buffer: ") 'ido-buffer-history default
+				   require-match initial))
+	   filename)
 
       ;; Choose the buffer name: either the text typed in, or the head
       ;; of the list of matches
@@ -2194,11 +2219,23 @@ If cursor is not at the end of the user input, move to end of input."
 		 (point))))
 	  (ido-visit-buffer buf method t)))
 
+       ;; check for a virtual buffer reference
+       ((and ido-use-virtual-buffers ido-virtual-buffers
+	     (setq filename (assoc buf ido-virtual-buffers)))
+	(ido-visit-buffer (find-file-noselect (cdr filename)) method t))
+
+       ((and (eq ido-create-new-buffer 'prompt)
+	     (null require-match)
+	     (not (y-or-n-p (format "No buffer matching `%s', create one? " buf))))
+	nil)
+
        ;; buffer doesn't exist
-       ((eq ido-create-new-buffer 'never)
+       ((and (eq ido-create-new-buffer 'never)
+	     (null require-match))
 	(message "No buffer matching `%s'" buf))
 
        ((and (eq ido-create-new-buffer 'prompt)
+	     (null require-match)
 	     (not (y-or-n-p (format "No buffer matching `%s', create one? " buf))))
 	nil)
 
@@ -2273,7 +2310,8 @@ If cursor is not at the end of the user input, move to end of input."
 	   (or ido-use-url-at-point ido-use-filename-at-point))
       (let (fn d)
 	(require 'ffap)
-	;; Duplicate code from ffap-guesser as we want different behavior for files and URLs.
+	;; Duplicate code from ffap-guesser as we want different
+	;; behavior for files and URLs.
 	(cond
 	 ((with-no-warnings
 	    (and ido-use-url-at-point
@@ -2289,7 +2327,10 @@ If cursor is not at the end of the user input, move to end of input."
 			      (ffap-guesser)
 			    (ffap-string-at-point))))
 	       (not (string-match "^http:/" fn))
-	       (setq d (file-name-directory fn))
+	       (let ((absolute-fn (expand-file-name fn)))
+		 (setq d (if (file-directory-p absolute-fn)
+			     (file-name-as-directory absolute-fn)
+			   (file-name-directory absolute-fn))))
 	       (file-directory-p d))
 	  (setq ido-current-directory d)
 	  (setq initial (file-name-nondirectory fn))))))
@@ -2307,7 +2348,7 @@ If cursor is not at the end of the user input, move to end of input."
 					    (or prompt "Find file: ")
 					    'ido-file-history
 					    (and (eq method 'alt-file) buffer-file-name)
-					    nil initial))))
+					    (confirm-nonexistent-file-or-buffer) initial))))
 
       ;; Choose the file name: either the text typed in, or the head
       ;; of the list of matches
@@ -2383,7 +2424,7 @@ If cursor is not at the end of the user input, move to end of input."
 	(ido-record-command 'write-file filename)
 	(add-to-history 'file-name-history filename)
 	(ido-record-work-directory)
-	(write-file filename))
+	(write-file filename t))
 
        ((eq method 'read-only)
 	(ido-record-work-file filename)
@@ -2662,6 +2703,16 @@ C-x C-f ... C-d  enter `dired' on current directory."
 	(setq ido-exit 'keep)
 	(exit-minibuffer))))
 
+(defun ido-toggle-virtual-buffers ()
+  "Toggle the use of virtual buffers.
+See `ido-use-virtual-buffers' for explanation of virtual buffer."
+  (interactive)
+  (when (and ido-mode (eq ido-cur-item 'buffer))
+    (setq ido-use-virtual-buffers (not ido-use-virtual-buffers))
+    (setq ido-text-init ido-text)
+    (setq ido-exit 'refresh)
+    (exit-minibuffer)))
+
 (defun ido-reread-directory ()
   "Read current directory again.
 May be useful if cached version is no longer valid, but directory
@@ -2681,6 +2732,12 @@ timestamp has not changed (e.g. with ftp or on Windows)."
   "Exit minibuffer, but make sure we have a match if one is needed."
   (interactive)
   (if (and (or (not ido-require-match)
+	       (if (memq ido-require-match '(confirm confirm-after-completion))
+		   (if (or (eq ido-cur-item 'dir)
+			   (eq last-command this-command))
+		       t
+		     (setq ido-show-confirm-message t)
+		     nil))
                (ido-existing-item-p))
            (not ido-incomplete-regexp))
       (exit-minibuffer)))
@@ -2754,7 +2811,7 @@ If no buffer or file exactly matching the prompt exists, maybe create a new one.
    ((eq this-original-command 'viper-del-backward-char-in-insert)
     (funcall this-original-command))
    (t
-    (delete-backward-char (prefix-numeric-value count)))))
+    (delete-char (- (prefix-numeric-value count))))))
 
 (defun ido-delete-backward-word-updir (count)
   "Delete all chars backwards, or at beginning of buffer, go up one level."
@@ -2858,7 +2915,7 @@ If no buffer or file exactly matching the prompt exists, maybe create a new one.
     (setq ido-rotate-temp t)
     (exit-minibuffer)))
 
-(defun ido-wide-find-dir-or-delete-dir (&optional dir)
+(defun ido-wide-find-dir-or-delete-dir (&optional _dir)
   "Prompt for DIR to search for using find, starting from current directory.
 If input stack is non-empty, delete current directory component."
   (interactive)
@@ -2967,12 +3024,11 @@ If repeated, insert text from buffer instead."
 	    ido-try-merged-list nil)
       (exit-minibuffer))))
 
-(defun ido-copy-current-word (all)
+(defun ido-copy-current-word (_all)
   "Insert current word (file or directory name) from current buffer."
   (interactive "P")
-  (let ((word (save-excursion
-		(set-buffer ido-entry-buffer)
-		(let ((p (point)) start-line end-line start-name name)
+  (let ((word (with-current-buffer ido-entry-buffer
+		(let ((p (point)) start-line end-line start-name)
 		  (if (and mark-active (/= p (mark)))
 		      (setq start-name (mark))
 		    (beginning-of-line)
@@ -3010,8 +3066,8 @@ If repeated, insert text from buffer instead."
   (if ido-matches
       (let ((next (cadr ido-matches)))
 	(setq ido-cur-list (ido-chop ido-cur-list next))
-	(setq ido-rescan t)
-	(setq ido-rotate t))))
+	(setq ido-matches (ido-chop ido-matches next))
+	(setq ido-rescan nil))))
 
 (defun ido-prev-match ()
   "Put last element of `ido-matches' at the front of the list."
@@ -3019,8 +3075,8 @@ If repeated, insert text from buffer instead."
   (if ido-matches
       (let ((prev (car (last ido-matches))))
 	(setq ido-cur-list (ido-chop ido-cur-list prev))
-	(setq ido-rescan t)
-	(setq ido-rotate t))))
+	(setq ido-matches (ido-chop ido-matches prev))
+	(setq ido-rescan nil))))
 
 (defun ido-next-match-dir ()
   "Find next directory in match list.
@@ -3179,7 +3235,7 @@ for first matching file."
   ;; Input is list of ("file" . "dir") cons cells.
   ;; Output is sorted list of ("file "dir" ...) lists
   (let ((l (sort items (lambda (a b) (string-lessp (car b) (car a)))))
-	res a cur dirs)
+	res a cur)
     (while l
       (setq a (car l)
 	    l (cdr l))
@@ -3341,13 +3397,39 @@ for first matching file."
 	(nconc ido-temp-list ido-current-buffers)
       (setq ido-temp-list ido-current-buffers))
     (if default
-	(progn
-	  (setq ido-temp-list
-		(delete default ido-temp-list))
-	  (setq ido-temp-list
-		(cons default ido-temp-list))))
+        (setq ido-temp-list
+              (cons default (delete default ido-temp-list))))
+    (if ido-use-virtual-buffers
+	(ido-add-virtual-buffers-to-list))
     (run-hooks 'ido-make-buffer-list-hook)
     ido-temp-list))
+
+(defun ido-add-virtual-buffers-to-list ()
+  "Add recently visited files, and bookmark files, to the buffer list.
+This is to make them appear as if they were \"virtual buffers\"."
+  ;; If no buffers matched, and virtual buffers are being used, then
+  ;; consult the list of past visited files, to see if we can find
+  ;; the file which the user might thought was still open.
+  (unless recentf-mode (recentf-mode 1))
+  (setq ido-virtual-buffers nil)
+  (let (name)
+    (dolist (head recentf-list)
+      (and (setq name (file-name-nondirectory head))
+           (null (get-file-buffer head))
+           (not (assoc name ido-virtual-buffers))
+           (not (member name ido-temp-list))
+           (not (ido-ignore-item-p name ido-ignore-buffers))
+           ;;(file-exists-p head)
+           (push (cons name head) ido-virtual-buffers))))
+  (when ido-virtual-buffers
+    (if ido-use-faces
+	(dolist (comp ido-virtual-buffers)
+	  (put-text-property 0 (length (car comp))
+			     'face 'ido-virtual
+			     (car comp))))
+    (setq ido-temp-list
+	  (nconc ido-temp-list
+		 (nreverse (mapcar #'car ido-virtual-buffers))))))
 
 (defun ido-make-choice-list (default)
   ;; Return the current list of choices.
@@ -3388,7 +3470,7 @@ for first matching file."
     ;; Strip method:user@host: part of tramp completions.
     ;; Tramp completions do not include leading slash.
     (let* ((len (1- (length dir)))
-	   (tramp-completion-mode t)
+	   (non-essential t)
 	   (compl
 	    (or (file-name-all-completions "" dir)
 		;; work around bug in ange-ftp.
@@ -3648,6 +3730,7 @@ for first matching file."
              matches (cdr error))))
     (when prefix-matches
       (ido-trace "prefix match" prefix-matches)
+      ;; Bug#2042.
       (setq matches (nconc prefix-matches matches)))
     (when suffix-matches
       (ido-trace "suffix match" (list text suffix-re suffix-matches))
@@ -3751,7 +3834,7 @@ for first matching file."
   ;; Return dotted pair (RES . 1).
   (cons res 1))
 
-(defun ido-choose-completion-string (choice buffer mini-p base-size)
+(defun ido-choose-completion-string (choice &rest ignored)
   (when (ido-active)
     ;; Insert the completion into the buffer where completion was requested.
     (if (get-buffer ido-completion-buffer)
@@ -3820,7 +3903,7 @@ for first matching file."
 		  (funcall f completion-list
 			   :help-string "ido "
 			   :activate-callback
-			   '(lambda (x y z) (message "Doesn't work yet, sorry!"))))
+			   (lambda (x y z) (message "Doesn't work yet, sorry!"))))
 	      ;; else running Emacs
 	      ;;(add-hook 'completion-setup-hook 'completion-setup-function)
 	      (display-completion-list completion-list)))))))
@@ -3833,15 +3916,32 @@ If cursor is not at the end of the user input, delete to end of input."
   (if (not (eobp))
       (delete-region (point) (line-end-position))
     (let ((enable-recursive-minibuffers t)
-	  (buf (ido-name (car ido-matches))))
-      (when buf
-	(kill-buffer buf)
-	;; Check if buffer still exists.
-	(if (get-buffer buf)
-	    ;; buffer couldn't be killed.
+	  (buf (ido-name (car ido-matches)))
+	  (nextbuf (cadr ido-matches)))
+      (cond
+       ((get-buffer buf)
+	;; If next match names a buffer use the buffer object; buffer
+	;; name may be changed by packages such as uniquify.
+	(when (and nextbuf (get-buffer nextbuf))
+	  (setq nextbuf (get-buffer nextbuf)))
+	(if (null (kill-buffer buf))
+	    ;; Buffer couldn't be killed.
 	    (setq ido-rescan t)
-	  ;; else buffer was killed so remove name from list.
-	  (setq ido-cur-list (delq buf ido-cur-list)))))))
+	  ;; Else `kill-buffer' succeeds so re-make the buffer list
+	  ;; taking into account packages like uniquify may rename
+	  ;; buffers.
+	  (if (bufferp nextbuf)
+	      (setq nextbuf (buffer-name nextbuf)))
+	  (setq ido-default-item nextbuf
+		ido-text-init ido-text
+		ido-exit 'refresh)
+	  (exit-minibuffer)))
+       ;; Handle virtual buffers
+       ((assoc buf ido-virtual-buffers)
+	(setq recentf-list
+	      (delete (cdr (assoc buf ido-virtual-buffers)) recentf-list))
+	(setq ido-cur-list (delete buf ido-cur-list))
+	(setq ido-rescan t))))))
 
 ;;; DELETE CURRENT FILE
 (defun ido-delete-file-at-head ()
@@ -4178,8 +4278,7 @@ For details of keybindings, see `ido-find-file'."
 	    ido-text-init contents
 	    ido-rotate-temp t
 	    ido-exit 'refresh)
-      (save-excursion
-	(set-buffer buffer)
+      (with-current-buffer buffer
 	(ido-tidy))
       (throw 'ido contents))))
 
@@ -4393,16 +4492,13 @@ For details of keybindings, see `ido-find-file'."
 
 	;; Insert the match-status information:
 	(ido-set-common-completion)
-	(let ((inf (ido-completions
-		    contents
-		    minibuffer-completion-table
-		    minibuffer-completion-predicate
-		    (not minibuffer-completion-confirm))))
+	(let ((inf (ido-completions contents)))
+	  (setq ido-show-confirm-message nil)
 	  (ido-trace "inf" inf)
 	  (insert inf))
 	))))
 
-(defun ido-completions (name candidates predicate require-match)
+(defun ido-completions (name)
   ;; Return the string that is displayed after the user's text.
   ;; Modified from `icomplete-completions'.
 
@@ -4430,6 +4526,8 @@ For details of keybindings, see `ido-find-file'."
 
     (cond ((null comps)
 	   (cond
+	    (ido-show-confirm-message
+	     (or (nth 10 ido-decorations) " [Confirm]"))
 	    (ido-directory-nonreadable
 	     (or (nth 8 ido-decorations) " [Not readable]"))
 	    (ido-directory-too-big
@@ -4496,7 +4594,6 @@ For details of keybindings, see `ido-find-file'."
   (when (ido-active)
     (add-hook 'pre-command-hook 'ido-tidy nil t)
     (add-hook 'post-command-hook 'ido-exhibit nil t)
-    (setq cua-inhibit-cua-keys t)
     (when (featurep 'xemacs)
       (ido-exhibit)
       (goto-char (point-min)))
@@ -4640,13 +4737,14 @@ See `read-directory-name' for additional parameters."
 	  (concat ido-current-directory filename)))))
 
 ;;;###autoload
-(defun ido-completing-read (prompt choices &optional predicate require-match initial-input hist def)
+(defun ido-completing-read (prompt choices &optional _predicate require-match
+                            initial-input hist def _inherit-input-method)
   "Ido replacement for the built-in `completing-read'.
 Read a string in the minibuffer with ido-style completion.
 PROMPT is a string to prompt with; normally it ends in a colon and a space.
 CHOICES is a list of strings which are the possible completions.
-PREDICATE is currently ignored; it is included to be compatible
- with `completing-read'.
+PREDICATE and INHERIT-INPUT-METHOD is currently ignored; it is included
+ to be compatible with `completing-read'.
 If REQUIRE-MATCH is non-nil, the user is not allowed to exit unless
  the input is (or completes to) an element of CHOICES or is null.
  If the input is null, `ido-completing-read' returns DEF, or an empty
@@ -4660,6 +4758,8 @@ DEF, if non-nil, is the default value."
 	(ido-directory-too-big nil)
 	(ido-context-switch-command 'ignore)
 	(ido-choice-list choices))
+    ;; Initialize ido before invoking ido-read-internal
+    (ido-common-initialization)
     (ido-read-internal 'list prompt hist def require-match initial-input)))
 
 (defun ido-unload-function ()
@@ -4671,5 +4771,4 @@ DEF, if non-nil, is the default value."
 
 (provide 'ido)
 
-;; arch-tag: b63a3500-1735-41bd-8a01-05373f0864da
 ;;; ido.el ends here
