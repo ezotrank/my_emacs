@@ -41,6 +41,7 @@
     aspell
     cedet
     ecb
+    nginx
     ezo))
 
 ;; For server mode

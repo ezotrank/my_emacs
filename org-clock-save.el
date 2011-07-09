@@ -1,1 +1,1 @@
-;; org-persist.el - alisa at <2011-07-06 Wed 15:03>
+;; org-persist.el - alisa at <2011-07-09 Sat 16:14>
