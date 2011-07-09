@@ -61,8 +61,8 @@
 (color-theme-gray30)
 
 ;; Don't need in console version
-(tool-bar-mode nil)           ;; Disable up toolbar
-(scroll-bar-mode nil)         ;; Disable vertical scroll bar
+;; (tool-bar-mode nil)           ;; Disable up toolbar
+;; (scroll-bar-mode nil)         ;; Disable vertical scroll bar
 (menu-bar-mode nil)             ;; Disable menu bar
 
 ;to highlight ( and )
