@@ -1,5 +1,5 @@
 ;; provide a useful error trace if loading this .emacs fails
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")
   (require 'site-gentoo))
@@ -42,6 +42,7 @@
     cedet
     ecb
     nginx
+    buffplus
     ezo))
 
 ;; For server mode
