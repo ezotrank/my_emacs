@@ -18,6 +18,15 @@
    (format "emacs -L . -batch -f batch-byte-compile *.el" path-to-config-dir)
    )
 )
+
+(defun package_compile()
+  (setq path-to-package-dir "~/.emacs/packages")
+  "Compile all package files."
+  (interactive nil)
+  (shell-command
+   (format "emacs -L . -batch -f batch-byte-compile *.el" path-to-package-dir)
+   )
+)
 ;; (add-hook 'after-save-hook 'autocompile)
 
 ;; Kill emacs daemon but save session

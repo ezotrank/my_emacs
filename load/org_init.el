@@ -44,6 +44,11 @@
   (find-file "~/org/hotkey.org")
 )
 
+(defun org-notes()
+  (interactive)
+  (find-file "~/org/notes.org")
+)
+
 (defun org-agenda-file()
   (interactive)
   (find-file "~/org/agenda.org")

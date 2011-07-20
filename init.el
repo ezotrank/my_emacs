@@ -43,6 +43,7 @@
     ecb
     nginx
     buffplus
+    gist
     ezo))
 
 ;; For server mode
