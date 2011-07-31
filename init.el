@@ -22,29 +22,33 @@
 (add-to-path 'packages/yasnippet)
 
 (load-init
-  '(general 
-    linum+ 
+  '(general    
+    linum+ ;; Line number
     ido 
-    magit 
-    rinari 
-    ruby 
-    rhtml 
-    eshell 
-    org 
+    magit ;; nice git
+    ruby ;; some special for ruby and rails
+    eshell ;; nice shell 
+    org ;; org-mode configure
     modeline 
-    yasnippet 
-    lua 
-    mutt 
-    haml
-    yaml
+    yasnippet ;; nice template system
+    lua ;; for lua-mode
+    mutt ;; for mutt-mode
+    haml ;; for haml-mode
+    yaml ;; for yaml-mode
     autocomplate
-    aspell
-    cedet
     ecb
     nginx
     buffplus
     gist
+    coffee
+    scss
     ezo))
+;; Non use inits
+;; rinari 
+;; rhtml 
+;; aspell
+;; cedet
+
 
 ;; For server mode
 (server-start)

@@ -6,27 +6,12 @@
 (defvar start-dir-name (car (last (split-string start-dir "/"))))
 (setq ecb-source-path (quote ("~/develop" "~/develop/project_mebel")))
 (custom-set-variables
- ;; '(display-default-dir-after-start (quote ("~/develop")))
- ;; '(display-default-dir-after-start (quote (pwd)))
  '(ecb-tip-of-the-day nil)
- '(ecb-layout-name "left14")
  '(ecb-options-version "2.40")
- '(ecb-layout-window-sizes (quote (("left14" (0.2564102564102564 . 0.6949152542372882) (0.2564102564102564 . 0.23728813559322035)))))
+ '(ecb-layout-name "left14")
+ '(ecb-layout-window-sizes (quote (("left14" (0.21301775147928995 . 0.3695652173913043) (0.21301775147928995 . 0.6086956521739131)) ("left2" (0.16568047337278108 . 0.4782608695652174) (0.16568047337278108 . 0.5)))))
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(ecb-source-path (list (list start-dir start-dir-name)))
  '(ecb-tip-of-the-day nil)
- ;; '(ecb-tree-buffer-style (quote ascii-guides))
  '(inhibit-startup-screen t)
 )
- ;; 
-
-
-; '(ecb-auto-activate nil)
-; '(ecb-gzip-setup (quote cons))
-; '(ecb-options-version "2.40")
-; '(ecb-layout-name "ezo1")
-; '(ecb-layout-window-sizes (quote (("ezo1" (ecb-directories-buffer-name 0.17985611510791366 . 0.9736842105263158)) ("ezo1" (ecb-directories-buffer-name 0.18705035971223022 . 0.9736842105263158)))))
-; '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
-; '(ecb-source-path (quote ("~/dev")))
-; '(ecb-tar-setup (quote cons))
-

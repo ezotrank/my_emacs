@@ -6,6 +6,8 @@
 (setq ac-auto-show-menu nil)
 (global-auto-complete-mode t)
 
+
+
 ;; (setq-default ac-sources '(ac-source-words-in-same-mode-buffers))
 ;; (add-hook 'emacs-lisp-mode-hook (lambda () (add-to-list 'ac-sources 'ac-source-symbols)))
 ;; (add-hook 'auto-complete-mode-hook (lambda () (add-to-list 'ac-sources 'ac-source-filename)))
