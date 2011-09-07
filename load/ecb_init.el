@@ -9,7 +9,7 @@
  '(ecb-tip-of-the-day nil)
  '(ecb-options-version "2.40")
  '(ecb-layout-name "left14")
- '(ecb-layout-window-sizes (quote (("left14" (0.21301775147928995 . 0.3695652173913043) (0.21301775147928995 . 0.6086956521739131)) ("left2" (0.16568047337278108 . 0.4782608695652174) (0.16568047337278108 . 0.5)))))
+  '(ecb-layout-window-sizes (quote (("left14" (ecb-directories-buffer-name 0.1893491124260355 . 0.37209302325581395) (ecb-history-buffer-name 0.1893491124260355 . 0.6046511627906976)))))
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(ecb-source-path (list (list start-dir start-dir-name)))
  '(ecb-tip-of-the-day nil)

@@ -58,7 +58,7 @@
 (require 'color-theme)
 (setq color-theme-is-global t)
 (color-theme-initialize)
-(color-theme-jsc-light2)
+(color-theme-gray30)
 
 ;; Don't need in console version
 (tool-bar-mode nil)           ;; Disable up toolbar

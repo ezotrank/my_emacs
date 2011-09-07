@@ -16,13 +16,15 @@
 
 (add-to-path 'load)                     ; initialization
 (add-to-path 'packages)                 ; additional packages
+(add-to-path 'packages/ecb-snap)
 (add-to-path 'packages/themes)
 (add-to-path 'packages/magit)
 (add-to-path 'packages/ruby-mode)
-(add-to-path 'packages/yasnippet)
+;; (add-to-path 'packages/yasnippet)
 
 (load-init
   '(general    
+    autocomplate
     linum+ ;; Line number
     ido 
     magit ;; nice git
@@ -30,24 +32,23 @@
     eshell ;; nice shell 
     org ;; org-mode configure
     modeline 
-    yasnippet ;; nice template system
-    lua ;; for lua-mode
-    mutt ;; for mutt-mode
-    haml ;; for haml-mode
     yaml ;; for yaml-mode
-    autocomplate
     ecb
-    nginx
     buffplus
     gist
-    coffee
-    scss
     ezo))
 ;; Non use inits
 ;; rinari 
 ;; rhtml 
 ;; aspell
 ;; cedet
+;; yasnippet ;; nice template system
+;; mutt ;; for mutt-mode
+;; haml ;; for haml-mode
+;; nginx
+;; coffee
+;; scss
+;; lua ;; for lua-mode
 
 
 ;; For server mode

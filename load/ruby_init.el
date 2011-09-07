@@ -1,3 +1,6 @@
+;; For brackets and nice ruby code style
+(require 'ruby-electric)
+
 ;; Comment this, coz with this don't work feature-mode
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
@@ -7,9 +10,6 @@
 (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
-
-;; For brackets and nice ruby code style
-(require 'ruby-electric)
 
 ;; Some nice func
 (defun ruby-eval-buffer () (interactive)
@@ -39,8 +39,6 @@
 (setq feature-default-i18n-file "~/.emacs.d/own_snippets/i18n.yml")
 (setq feature-default-language "en")
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
-
-;; (require 'rspec-mode)
 
 
 ;; ;; CTAGS
