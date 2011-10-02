@@ -19,7 +19,6 @@
 (add-to-path 'packages/ecb-snap)
 (add-to-path 'packages/themes)
 (add-to-path 'packages/magit)
-(add-to-path 'packages/ruby-mode)
 ;; (add-to-path 'packages/yasnippet)
 
 (load-init
@@ -36,6 +35,8 @@
     ecb
     buffplus
     gist
+    lua ;; for lua-mode
+    haml ;; for haml-mode
     ezo))
 ;; Non use inits
 ;; rinari 
@@ -44,12 +45,10 @@
 ;; cedet
 ;; yasnippet ;; nice template system
 ;; mutt ;; for mutt-mode
-;; haml ;; for haml-mode
+
 ;; nginx
 ;; coffee
 ;; scss
-;; lua ;; for lua-mode
-
-
+;; 
 ;; For server mode
 (server-start)

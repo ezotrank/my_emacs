@@ -60,3 +60,17 @@
                             (flyspell-mode)
                             )
           )
+
+(require 'org-publish)
+(setq org-publish-project-alist
+      '(
+        ("blog.kremenev.com"
+         :base-directory "~/org"
+         :base-extension "org"
+         :publishing-directory "~/org/public_html"
+         :recursive t
+         :publishing-function org-publish-org-to-html
+         :headline-levels 4             ; Just the default for this project.
+         :auto-preamble t
+         )
+      ))

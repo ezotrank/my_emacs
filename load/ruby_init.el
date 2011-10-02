@@ -1,3 +1,5 @@
+(add-to-path 'packages/ruby-mode)
+
 ;; For brackets and nice ruby code style
 (require 'ruby-electric)
 
@@ -9,6 +11,7 @@
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("config.ru$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; Some nice func
@@ -33,34 +36,13 @@
              (inf-ruby-keys)
              ))
 
+(add-to-path 'packages/rhtml)
+(require 'rhtml-mode)
+(add-to-list 'auto-mode-alist '("\\.erb$" . rhtml-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\.erb$" . rhtml-mode))
 
+(add-to-path 'packages/cucumber)
 (require 'feature-mode)
 (setq feature-default-language "en")
-(setq feature-default-i18n-file "~/.emacs.d/own_snippets/i18n.yml")
-(setq feature-default-language "en")
+(setq feature-default-i18n-file "~/.emacs.d/packages/cucumber/i18n.yml")
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
-
-
-;; ;; CTAGS
-;; (setq path-to-ctags "/usr/bin/ctags") ;; <- your ctags path here
-;; (defun create-tags (dir-name)
-;;   "Create tags file."
-;;   (interactive "DDirectory: ")
-;;   (shell-command
-;;    (format "%s -f %s/TAGS --Ruby-kinds=+ -e -R %s" path-to-ctags dir-name dir-name))
-;;   )
-
-;; (defun try-complete-abbrev (old)
-;;   (if (expand-abbrev) t nil))
-
-;; (setq hippie-expand-try-functions-list
-;;       '(try-complete-abbrev
-;;         try-complete-file-name
-;;         try-expand-dabbrev))
-
-
-;; (defun nginx-passenger-restart ()
-;;   (interactive)
-;;   (shell-command "echo 1 > /home/ezo/dev/pronix/multishop/tmp/restart.txt" t)
-;;   )
-;; (global-set-key (kbd "C-x r n") 'nginx-passenger-restart)
