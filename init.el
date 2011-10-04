@@ -19,7 +19,6 @@
 (add-to-path 'packages/ecb-snap)
 (add-to-path 'packages/themes)
 (add-to-path 'packages/magit)
-;; (add-to-path 'packages/yasnippet)
 
 (load-init
   '(general    
@@ -36,8 +35,9 @@
     buffplus
     gist
     lua ;; for lua-mode
-    haml ;; for haml-mode
+    yasnippet ;; nice template system
     ezo))
+
 ;; Non use inits
 ;; rinari 
 ;; rhtml 

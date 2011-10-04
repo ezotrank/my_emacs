@@ -36,13 +36,23 @@
              (inf-ruby-keys)
              ))
 
+;; Load Rhtml mode
 (add-to-path 'packages/rhtml)
 (require 'rhtml-mode)
 (add-to-list 'auto-mode-alist '("\\.erb$" . rhtml-mode))
+(add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\.erb$" . rhtml-mode))
 
+;; Load Cucumber mode
 (add-to-path 'packages/cucumber)
 (require 'feature-mode)
 (setq feature-default-language "en")
 (setq feature-default-i18n-file "~/.emacs.d/packages/cucumber/i18n.yml")
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
+
+;; Load HAML mode
+(require 'haml-mode)
+(add-hook 'haml-mode-hook
+          '(lambda ()
+             (setq indent-tabs-mode nil)
+             (define-key haml-mode-map "\C-m" 'newline-and-indent)))
