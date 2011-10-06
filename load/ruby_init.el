@@ -56,3 +56,8 @@
           '(lambda ()
              (setq indent-tabs-mode nil)
              (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+
+;; Load Rspec mode
+(add-to-path 'packages/rspec-mode)
+(require 'mode-compile)
+(require 'rspec-mode)

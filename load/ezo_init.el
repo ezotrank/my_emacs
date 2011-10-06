@@ -27,6 +27,13 @@
    (format "emacs -L . -batch -f batch-byte-compile *.el" path-to-package-dir)
    )
 )
+
+(defun restart-snippets()
+  "Restart Emacs snippets"
+  (interactive)
+  (load-file "~/.emacs.d/load/yasnippet_init.el")
+)
+
 ;; (add-hook 'after-save-hook 'autocompile)
 
 ;; Kill emacs daemon but save session

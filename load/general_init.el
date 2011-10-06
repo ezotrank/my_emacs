@@ -73,7 +73,7 @@
 ;Save emacs session when don't use session.el
 (desktop-save-mode t)
 
-;; Set a font
+;; Set a font 
 (setq default-frame-alist '((font-backend . "xft")
                             (font . "Inconsolata-11")
                             (left-fringe . -1)

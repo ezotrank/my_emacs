@@ -1,0 +1,4 @@
+#name : <%= f.label :field %>
+# --
+<%= f.label ${:label} %>
+$0
