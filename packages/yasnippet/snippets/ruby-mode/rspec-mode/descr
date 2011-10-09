@@ -1,0 +1,6 @@
+#name : descrine :text do
+#       end
+# --
+describe ${:text} do
+   $0
+end
