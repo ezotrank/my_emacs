@@ -1,5 +1,5 @@
 ;; provide a useful error trace if loading this .emacs fails
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")
   (require 'site-gentoo))
@@ -17,7 +17,6 @@
 (add-to-path 'load)                     ; initialization
 (add-to-path 'packages)                 ; additional packages
 (add-to-path 'packages/ecb-snap)
-(add-to-path 'packages/themes)
 (add-to-path 'packages/magit)
 
 (load-init

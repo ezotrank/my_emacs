@@ -1,15 +1,20 @@
+;; Don't need in console version
+(tool-bar-mode 0)           ;; Disable up toolbar
+(scroll-bar-mode 0)         ;; Disable vertical scroll bar
+(menu-bar-mode 0)           ;; Disable menu bar
+
 ;; don't ask, just do it!
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
-(put 'overwrite-mode 'disabled nil)
-(put 'set-goal-column 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
+;; (put 'downcase-region 'disabled nil)
+;; (put 'upcase-region 'disabled nil)
+;; (put 'overwrite-mode 'disabled nil)
+;; (put 'set-goal-column 'disabled nil)
+;; (put 'narrow-to-region 'disabled nil)
 
 (setq
  inhibit-startup-message t           ;; don't show annoing startup msg
- make-backup-files nil               ;; NO annoing backups
+ make-backup-files 0                 ;; NO annoing backups
  vc-follow-symlinks t                ;; follow symlinks and don't ask
- echo-keystrokes 0.01                ;; see what you type
+ ;; echo-keystrokes 0.01                ;; see what you type
  comint-completion-addsuffix t       ;; Insert space/slash after completion
  kill-whole-line t                   ;; delete line in one stage
  default-major-mode 'text-mode       ;; default mode
@@ -55,15 +60,10 @@
 
 (setq ring-bell-function (lambda () ())) ;; I hate beeps
 
-(require 'color-theme)
-(setq color-theme-is-global t)
-(color-theme-initialize)
-(color-theme-gray30)
+(custom-set-variables
+ '(custom-enabled-themes (quote (wombat)))
+ )
 
-;; Don't need in console version
-(tool-bar-mode nil)           ;; Disable up toolbar
-(scroll-bar-mode nil)         ;; Disable vertical scroll bar
-(menu-bar-mode nil)             ;; Disable menu bar
 
 ;to highlight ( and )
 (show-paren-mode t)
@@ -85,11 +85,6 @@
   (interactive)
   (kill-buffer (current-buffer)))
 (global-set-key (kbd "C-x k") 'kill-current-buffer)
-
-;; Time in statusbar
-;; (setq display-time-interval 1)
-;; (setq display-time-format "%H:%M:%S")
-;; (display-time-mode)
 
 ;; highlight marked text
 (transient-mark-mode t)
