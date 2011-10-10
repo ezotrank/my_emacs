@@ -1,9 +1,5 @@
-(add-to-path 'packages/ruby-mode)
-
-;; For brackets and nice ruby code style
-(require 'ruby-electric)
-
 ;; Comment this, coz with this don't work feature-mode
+(add-to-path 'elpa/ruby-mode-1.1)
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
@@ -14,27 +10,13 @@
 (add-to-list 'auto-mode-alist '("config.ru$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
-;; Some nice func
-(defun ruby-eval-buffer () (interactive)
-    "Evaluate the buffer with ruby."
-    (shell-command-on-region (point-min) (point-max) "ruby"))
+;; For brackets and nice ruby code style
+(add-to-path 'elpa/ruby-electric-1.1)
+(require 'ruby-electric)
 
-(defun my-ruby-mode-hook ()
-  (font-lock-mode t)
-     (setq standard-indent 2)
-     (ruby-electric-mode t)
-     (define-key ruby-mode-map "\C-c\C-a" 'ruby-eval-buffer))
-(add-hook 'ruby-mode-hook 'my-ruby-mode-hook)
-
-;; Load inf-ruby(use to debug and open irb)
-(autoload 'run-ruby "inf-ruby"
-  "Run an inferior Ruby process")
-(autoload 'inf-ruby-keys "inf-ruby"
-  "Set local key defs for inf-ruby in ruby-mode")
-(add-hook 'ruby-mode-hook
-          '(lambda ()
-             (inf-ruby-keys)
-             ))
+;; For insert end
+(add-to-path 'elpa/ruby-end-0.0.2)
+(require 'ruby-end)
 
 ;; Load Rhtml mode
 (add-to-path 'packages/rhtml)
@@ -51,6 +33,7 @@
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
 ;; Load HAML mode
+(add-to-path 'elpa/haml-mode-3.0.14)
 (require 'haml-mode)
 (add-hook 'haml-mode-hook
           '(lambda ()
@@ -58,6 +41,29 @@
              (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 
 ;; Load Rspec mode
-(add-to-path 'packages/rspec-mode)
+(add-to-path 'elpa/rspec-mode-0.2)
 (require 'mode-compile)
 (require 'rspec-mode)
+
+;; ;; Some nice func
+;; (defun ruby-eval-buffer () (interactive)
+;;     "Evaluate the buffer with ruby."
+;;     (shell-command-on-region (point-min) (point-max) "ruby"))
+
+;; (defun my-ruby-mode-hook ()
+;;   (font-lock-mode t)
+;;      (setq standard-indent 2)
+;;      (ruby-electric-mode t)
+;;      (define-key ruby-mode-map "\C-c\C-a" 'ruby-eval-buffer))
+;; (add-hook 'ruby-mode-hook 'my-ruby-mode-hook)
+
+;; ;; Load inf-ruby(use to debug and open irb)
+;; (autoload 'run-ruby "inf-ruby"
+;;   "Run an inferior Ruby process")
+;; (autoload 'inf-ruby-keys "inf-ruby"
+;;   "Set local key defs for inf-ruby in ruby-mode")
+;; (add-hook 'ruby-mode-hook
+;;           '(lambda ()
+;;              (inf-ruby-keys)
+;;              ))
+

@@ -20,7 +20,8 @@
 (add-to-path 'packages/magit)
 
 (load-init
-  '(general    
+  '(general
+    elpa
     autocomplate
     linum+ ;; Line number
     ido 

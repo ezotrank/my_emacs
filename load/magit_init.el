@@ -1,1 +1,1 @@
-(require 'magit)
+;; (require 'magit)
