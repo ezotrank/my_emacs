@@ -8,7 +8,6 @@
 ;; Adapt to suit you needs
 ;; see http://tromey.com/elpa/news.html for available packages
 (defvar starter-kit-packages (list 'org
-                                   'auto-complete
                                    'ruby-mode
                                    'ruby-electric
                                    'ruby-end

@@ -8,6 +8,7 @@
 (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("config.ru$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Guardfile$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; For brackets and nice ruby code style
@@ -24,6 +25,14 @@
 (add-to-list 'auto-mode-alist '("\\.erb$" . rhtml-mode))
 (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\.erb$" . rhtml-mode))
+;; Disable abbrev mode for rhtml, becouse very bad with "<%="
+(add-hook 'rhtml-mode-hook
+          '(lambda ()
+             (abbrev-mode 0)
+             )
+          )
+
+
 
 ;; Load Cucumber mode
 (add-to-path 'packages/cucumber)
