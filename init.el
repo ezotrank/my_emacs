@@ -1,5 +1,5 @@
 ;; provide a useful error trace if loading this .emacs fails
-(setq debug-on-error nil)
+(setq debug-on-error -1)
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")
   (require 'site-gentoo))
@@ -18,6 +18,10 @@
 (add-to-path 'packages)                 ; additional packages
 (add-to-path 'packages/ecb-snap)
 (add-to-path 'packages/magit)
+
+(defvar prelude-dir (file-name-directory load-file-name))
+(defvar ezo-elpa (concat prelude-dir "elpa/"))
+(add-to-list 'load-path ezo-elpa)
 
 (load-init
   '(general
@@ -51,4 +55,4 @@
 ;; scss
 ;; 
 ;; For server mode
-(server-start)
+;; (server-start)

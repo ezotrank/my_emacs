@@ -20,6 +20,15 @@
 (require 'ruby-end)
 (require 'ruby-block)
 
+(defun prelude-ruby-mode-hook ()
+  (prelude-coding-hook)
+  ;; turn off the annoying input echo in irb
+  (setq comint-process-echoes t)
+  (ruby-block-mode t)
+)
+
+(add-hook 'ruby-mode-hook 'prelude-ruby-mode-hook)
+
 ;; Load Rhtml mode
 (add-to-path 'packages/rhtml)
 (require 'rhtml-mode)
@@ -32,8 +41,6 @@
              (abbrev-mode 0)
              )
           )
-
-
 
 ;; Load Cucumber mode
 (add-to-path 'packages/cucumber)

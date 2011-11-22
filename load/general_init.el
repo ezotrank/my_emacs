@@ -1,71 +1,31 @@
 ;; Don't need in console version
-(tool-bar-mode 0)           ;; Disable up toolbar
-(scroll-bar-mode 0)         ;; Disable vertical scroll bar
-(menu-bar-mode 0)           ;; Disable menu bar
+(tool-bar-mode -1)           ;; Disable up toolbar
+(scroll-bar-mode -1)         ;; Disable vertical scroll bar
+(menu-bar-mode -1)           ;; Disable menu bar
 
+;; disable startup screen
+(setq inhibit-startup-screen t)
 
-(setq
- inhibit-startup-message t           ;; don't show annoing startup msg
- make-backup-files 0                 ;; NO annoing backups
- vc-follow-symlinks t                ;; follow symlinks and don't ask
- ;; echo-keystrokes 0.01                ;; see what you type
- comint-completion-addsuffix t       ;; Insert space/slash after completion
- kill-whole-line t                   ;; delete line in one stage
- default-major-mode 'text-mode       ;; default mode
- delete-key-deletes-forward t        ;; meaning are the same as the name :)
- next-line-add-newlines nil          ;; don't add new lines when scrolling down
- require-final-newline t             ;; make sure file ends with NEWLINE
- mode-require-final-newline t        ;; same as above, set more generally
- delete-old-versions t               ;; delete excess backup versions
- default-tab-width 4
- mouse-yank-at-point t               ;; paste at cursor, NOT at mouse pointer position
- apropos-do-all t                    ;; apropos works better but slower
- display-time-24hr-format t
- display-time-day-and-date t
- calendar-date-style 'european
- calendar-week-start-day 1
- auto-save-interval 128              ;; autosave every 512 keyboard inputs
- auto-save-list-file-prefix nil
- cursor-in-non-selected-windows nil
- dired-recursive-copies 'top
- dired-recursive-deletes 'top
- safe-local-variable-values '((encoding . utf-8) (prompt-to-byte-compile))
- dabbrev-case-fold-search nil        ;; Case is significant for dabbrev
- split-width-threshold 200           ;; I don't like horizontal splitting
- kill-ring-max 2000                  ;; oh yes! long killring!
- search-highlight t                  ;; Highlight search object
- query-replace-highlight t           ;; Highlight query object
- mouse-sel-retain-highlight t        ;; Keep mouse high-lightening
- current-language-environment "English"
- require-final-newline t             ;; _always_ require final newline
- undo-limit 4000                    ;; Set undo limit
- )
+;; nice scrolling, emacs work slowly
+;; (setq scroll-margin 0
+;;       scroll-conservatively 100000
+;;       scroll-preserve-screen-position 1)
 
-(setq-default
- save-place t         ;; save position in files
- case-fold-search t   ;; case INsensitive search
- indent-tabs-mode nil ;; do not use tabs for indentation
- fill-column 80       ;; number of chars in line
- save-place t         ;; save position in files
-)
+;; mode line settings
+(line-number-mode t)
+(column-number-mode t)
+(size-indication-mode t)
 
 ;; Ask questions with short answers
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(setq ring-bell-function (lambda () ())) ;; I hate beeps
-
-(custom-set-variables
- '(custom-enabled-themes (quote (wombat)))
- )
-
+;; custom Emacs 24 color themes support
+(add-to-list 'custom-theme-load-path (concat prelude-dir "themes/"))
+(load-theme 'zenburn t)
 
 ;to highlight ( and )
 (show-paren-mode t)
-(line-number-mode t)
-(column-number-mode t)
-
-;Save emacs session when don't use session.el
-(desktop-save-mode t)
+(setq show-paren-style 'parenthesis)
 
 ;; Set a font 
 (setq default-frame-alist '((font-backend . "xft")
@@ -82,15 +42,6 @@
 
 ;; highlight marked text
 (transient-mark-mode t)
-
-;; change backup behavior to save in a directory, not in a miscellany
-;; of files all over the place
-(setq backup-by-copying t
-      backup-directory-alist '(("." . "~/.emacs.d/saves"))
-      delete-old-versions t
-      kept-new-versions 6
-      kept-old-versions 2
-      version-control nil)
 
 ;; Resize windows
 (defun win-resize-top-or-bot ()
@@ -158,12 +109,12 @@ middle"
 
 
 (global-set-key (kbd "M-g") 'goto-line)
-(global-set-key (kbd "M-?") 'help-command)
-(global-set-key (kbd "M-1") 'delete-other-windows)
-(global-set-key (kbd "M-2") 'split-window-vertically)
-(global-set-key (kbd "M-3") 'split-window-horizontally)
-(global-set-key (kbd "M-0") 'delete-window)
-(global-set-key (kbd "M-p") 'ecb-toggle-ecb-windows)
+;; (global-set-key (kbd "M-?") 'help-command)
+;; (global-set-key (kbd "M-1") 'delete-other-windows)
+;; (global-set-key (kbd "M-2") 'split-window-vertically)
+;; (global-set-key (kbd "M-3") 'split-window-horizontally)
+;; (global-set-key (kbd "M-0") 'delete-window)
+;; (global-set-key (kbd "M-p") 'ecb-toggle-ecb-windows)
 
 ;; browse
 (setq browse-url-browser-function 'browse-url-generic
@@ -193,3 +144,98 @@ middle"
 (global-set-key (kbd "<right>") (lambda ()
                                   (interactive)
                                   (message "Arrow key navigation is disabled. Use C-f instead.")))
+
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+;; revert buffers automatically when underlying files are changed externally
+(global-auto-revert-mode t)
+
+;; hippie expand is dabbrev expand on steroids
+(setq hippie-expand-try-functions-list '(try-expand-dabbrev
+                                         try-expand-dabbrev-all-buffers
+                                         try-expand-dabbrev-from-kill
+                                         try-complete-file-name-partially
+                                         try-complete-file-name
+                                         try-expand-all-abbrevs
+                                         try-expand-list
+                                         try-expand-line
+                                         try-complete-lisp-symbol-partially
+                                         try-complete-lisp-symbol))
+;; smart indenting and pairing for all
+(electric-pair-mode t)
+(electric-indent-mode t)
+(electric-layout-mode t)
+
+;; saveplace remembers your location in a file when saving files
+(setq save-place-file (concat user-emacs-directory "saveplace"))
+;; activate it for all buffers
+(setq-default save-place t)
+(require 'saveplace)
+
+;; savehist keeps track of some history
+(setq savehist-additional-variables
+      ;; search entries
+      '(search ring regexp-search-ring)
+      ;; save every minute
+      savehist-autosave-interval 60
+      ;; keep the home clean
+      savehist-file (concat user-emacs-directory "savehist"))
+(savehist-mode t)
+
+;; save recent files
+(setq recentf-save-file (concat user-emacs-directory "recentf")
+      recentf-max-saved-items 200
+      recentf-max-menu-items 15)
+(recentf-mode t)
+
+;; time-stamps
+;; when there's "Time-stamp: <>" in the first 10 lines of the file
+(setq time-stamp-active t
+      ;; check first 10 buffer lines for Time-stamp: <>
+      time-stamp-line-limit 10
+      time-stamp-format "%04y-%02m-%02d %02H:%02M:%02S (%u)") ; date format
+(add-hook 'write-file-hooks 'time-stamp) ; update when saving
+
+
+;; use shift + arrow keys to switch between visible buffers
+(require 'windmove)
+(windmove-default-keybindings 'super)
+
+;; tramp, for sudo access
+(require 'tramp)
+;; keep in mind known issues with zsh - see emacs wiki
+(setq tramp-default-method "ssh")
+
+;; bookmarks
+(setq bookmark-default-file (concat user-emacs-directory "bookmarks")
+      bookmark-save-flag 1)
+
+(defun prelude-add-watchwords ()
+  (font-lock-add-keywords
+   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
+          1 font-lock-warning-face t))))
+
+(defun prelude-local-comment-auto-fill ()
+  (set (make-local-variable 'comment-auto-fill-only-comments) t)
+  (auto-fill-mode t))
+
+(defun prelude-turn-on-whitespace ()
+  (whitespace-mode +1))
+
+(defun prelude-turn-off-whitespace ()
+  (whitespace-mode -1))
+
+(defun prelude-turn-on-abbrev ()
+  (abbrev-mode +1))
+
+(defun prelude-coding-hook ()
+  "Default coding hook, useful with any programming language."
+  (flyspell-prog-mode)
+  (prelude-local-comment-auto-fill)
+  (prelude-turn-on-whitespace)
+  (prelude-turn-on-abbrev)
+  (prelude-add-watchwords))

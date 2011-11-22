@@ -34,8 +34,6 @@
   (load-file "~/.emacs.d/load/yasnippet_init.el")
 )
 
-;; (add-hook 'after-save-hook 'autocompile)
-
 ;; Kill emacs daemon but save session
 (defun my-kill-emacs ()
   (interactive)
@@ -58,3 +56,70 @@
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+(defun open-with ()
+  "Simple function that allows us to open the underlying
+file of a buffer in an external program."
+  (interactive)
+  (when buffer-file-name
+    (shell-command (concat
+                    (if (eq system-type 'darwin)
+                        "open"
+                      (read-shell-command "Open current file with: "))
+                    " "
+                    buffer-file-name))))
+
+(defun prelude-google ()
+  "Googles a query or region if any."
+  (interactive)
+  (browse-url
+   (concat
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+    (if mark-active
+        (buffer-substring (region-beginning) (region-end))
+      (read-string "Google: ")))))
+
+(defun prelude-move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (previous-line 2))
+
+(global-set-key [(control shift up)] 'prelude-move-line-up)
+
+(defun prelude-move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (next-line 1)
+  (transpose-lines 1)
+  (previous-line 1))
+
+(global-set-key [(control shift down)] 'prelude-move-line-down)
+
+(defun prelude-copy-file-name-to-clipboard ()
+  "Put the current file name on the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
+
+(defun prelude-rename-file-and-buffer ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (message "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (cond ((get-buffer new-name)
+               (message "A buffer named '%s' already exists!" new-name))
+              (t
+               (rename-file name new-name 1)
+               (rename-buffer new-name)
+               (set-visited-file-name new-name)
+               (set-buffer-modified-p nil)))))))
