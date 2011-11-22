@@ -1,0 +1,4 @@
+#-*- require-final-newline: nil -*-
+#name : # Then show me the page
+# --
+Then show me the page$0
