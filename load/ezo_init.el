@@ -44,17 +44,17 @@
   (kill-emacs))
 (global-set-key (kbd "C-x c") 'my-kill-emacs)
 
-;; Here's a handy function that kills the current buffer and removes the file it is connected to.
-(defun delete-this-buffer-and-file ()
-  "Removes file connected to current buffer and kills buffer."
+(defun delete-file-and-buffer ()
+  "Kills the current buffer and deletes the file it is visiting"
   (interactive)
-  (let ((filename (buffer-file-name))
-        (buffer (current-buffer))
-        (name (buffer-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
-      (when (yes-or-no-p "Are you sure you want to remove this file? ")
-        (delete-file filename)
-        (kill-buffer buffer)
-        (message "File '%s' successfully removed" filename)))))
-;; (global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (delete-file filename)
+      (message "Deleted file %s" filename)))
+  (kill-buffer))
+
+(defun sudo-edit (&optional arg)
+  (interactive "p")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))

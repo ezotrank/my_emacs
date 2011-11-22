@@ -18,6 +18,7 @@
 ;; For insert end
 (add-to-path 'elpa/ruby-end-0.0.2)
 (require 'ruby-end)
+(require 'ruby-block)
 
 ;; Load Rhtml mode
 (add-to-path 'packages/rhtml)

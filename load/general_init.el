@@ -3,12 +3,6 @@
 (scroll-bar-mode 0)         ;; Disable vertical scroll bar
 (menu-bar-mode 0)           ;; Disable menu bar
 
-;; don't ask, just do it!
-;; (put 'downcase-region 'disabled nil)
-;; (put 'upcase-region 'disabled nil)
-;; (put 'overwrite-mode 'disabled nil)
-;; (put 'set-goal-column 'disabled nil)
-;; (put 'narrow-to-region 'disabled nil)
 
 (setq
  inhibit-startup-message t           ;; don't show annoing startup msg
@@ -173,7 +167,7 @@ middle"
 
 ;; browse
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "chromium-bin")
+      browse-url-generic-program "chromium")
 
 ;; this is also of interest, it auto-magically does a "chmod u+x"
 ;; when you save a script file (starting with "#!")
@@ -185,3 +179,17 @@ middle"
 ;; don't echo passwords when communicating with interactive programs
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 
+
+;; real Emacs hackers don't use the arrow keys
+(global-set-key (kbd "<up>") (lambda ()
+                               (interactive)
+                               (message "Arrow key navigation is disabled. Use C-p instead.")))
+(global-set-key (kbd "<down>") (lambda ()
+                                 (interactive)
+                                 (message "Arrow key navigation is disabled. Use C-n instead.")))
+(global-set-key (kbd "<left>") (lambda ()
+                                 (interactive)
+                                 (message "Arrow key navigation is disabled. Use C-b instead.")))
+(global-set-key (kbd "<right>") (lambda ()
+                                  (interactive)
+                                  (message "Arrow key navigation is disabled. Use C-f instead.")))
