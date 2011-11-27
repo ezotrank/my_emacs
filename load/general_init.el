@@ -216,7 +216,7 @@ middle"
 
 (defun prelude-add-watchwords ()
   (font-lock-add-keywords
-   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
+   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\|OPTIMIZE\\):"
           1 font-lock-warning-face t))))
 
 (defun prelude-local-comment-auto-fill ()
@@ -236,6 +236,6 @@ middle"
   "Default coding hook, useful with any programming language."
   (flyspell-prog-mode)
   (prelude-local-comment-auto-fill)
-  (prelude-turn-on-whitespace)
+  ;; (prelude-turn-on-whitespace)
   (prelude-turn-on-abbrev)
   (prelude-add-watchwords))
