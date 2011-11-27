@@ -10,8 +10,7 @@
                                    'ruby-end
                                    'haml-mode
                                    'rspec-mode
-                                   'ecb-stap
-                                   'magit)
+                                   'ecb-stap)
   "Libraries that should be installed by default.")
 
 (defun starter-kit-elpa-install ()

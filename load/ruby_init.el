@@ -58,7 +58,7 @@
              (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 
 ;; Load Rspec mode
-(add-to-path 'elpa/rspec-mode-0.2)
+(add-to-path 'packages/rspec)
 (require 'mode-compile)
 (require 'rspec-mode)
 

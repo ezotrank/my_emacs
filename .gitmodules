@@ -1,0 +1,12 @@
+[submodule "packages/auto-complete"]
+	path = packages/auto-complete
+	url = git://github.com/m2ym/auto-complete.git
+[submodule "packages/magit"]
+	path = packages/magit
+	url = git://github.com/magit/magit.git
+[submodule "packages/rspec"]
+	path = packages/rspec
+	url = git://github.com/pezra/rspec-mode.git
+[submodule "packages/org"]
+	path = packages/org
+	url = git://github.com/emacsmirror/org.git
