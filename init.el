@@ -1,5 +1,5 @@
 ;; provide a useful error trace if loading this .emacs fails
-(setq debug-on-error -1)
+(setq debug-on-error nil)
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")
   (require 'site-gentoo))
@@ -24,23 +24,24 @@
 (add-to-list 'load-path ezo-elpa)
 
 (load-init
-  '(general
-    elpa
-    autocomplate
-    linum+ ;; Line number
-    ido 
-    magit ;; nice git
-    ruby ;; some special for ruby and rails
-    eshell ;; nice shell 
-    org ;; org-mode configure
-    modeline 
-    yaml ;; for yaml-mode
-    ecb
-    buffplus
-    gist
-    lua ;; for lua-mode
-    yasnippet ;; nice template system
-    ezo))
+ '(general
+   keybindings
+   elpa
+   autocomplate
+   linum+ ;; Line number
+   ido 
+   magit ;; nice git
+   ruby ;; some special for ruby and rails
+   eshell ;; nice shell 
+   org ;; org-mode configure
+   modeline 
+   yaml ;; for yaml-mode
+   ecb
+   buffplus
+   gist
+   lua ;; for lua-mode
+   yasnippet ;; nice template system
+   ezo))
 
 ;; Non use inits
 ;; rinari 

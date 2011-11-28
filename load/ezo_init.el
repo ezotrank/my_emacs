@@ -57,7 +57,7 @@
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
-(defun open-with ()
+(defun prelude-open-with ()
   "Simple function that allows us to open the underlying
 file of a buffer in an external program."
   (interactive)
