@@ -62,6 +62,13 @@
 (require 'mode-compile)
 (require 'rspec-mode)
 
+(add-to-path 'packages/markdown)
+(autoload 'markdown-mode "markdown-mode"
+  "Major mode for editing Markdown files" t)
+(setq auto-mode-alist
+      (cons '("\\.md" . markdown-mode) auto-mode-alist))
+(setq markdown-command "Markdown.pl")
+
 ;; ;; Some nice func
 ;; (defun ruby-eval-buffer () (interactive)
 ;;     "Evaluate the buffer with ruby."

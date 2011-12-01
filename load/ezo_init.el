@@ -123,3 +123,9 @@ file of a buffer in an external program."
                (rename-buffer new-name)
                (set-visited-file-name new-name)
                (set-buffer-modified-p nil)))))))
+
+(defun open-developer-screen ()
+  "Open the developer screen"
+  (interactive nil)
+  (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev")
+  )

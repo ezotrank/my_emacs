@@ -10,3 +10,6 @@
 [submodule "packages/org"]
 	path = packages/org
 	url = git://github.com/emacsmirror/org.git
+[submodule "packages/markdown"]
+	path = packages/markdown
+	url = git://jblevins.org/git/markdown-mode.git

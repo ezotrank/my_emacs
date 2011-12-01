@@ -56,4 +56,4 @@
 ;; scss
 ;; 
 ;; For server mode
-;; (server-start)
+(server-start)
