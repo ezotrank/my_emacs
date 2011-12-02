@@ -19,6 +19,13 @@
    )
 )
 
+(defun remove_precompile_config()
+  (setq path-to-config-dir "~/.emacs/load")
+  "Remove all *.elc from load direcotry"
+  (interactive nil)
+  (shell-command "rm *.elc" path-to-config-dir)
+  )
+
 (defun package_compile()
   (setq path-to-package-dir "~/.emacs/packages")
   "Compile all package files."
@@ -128,4 +135,10 @@ file of a buffer in an external program."
   "Open the developer screen"
   (interactive nil)
   (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev")
+  )
+
+(defun open-urxvtc ()
+  "Open urxvtc terminal in current direcotry"
+  (interactive nil)
+  (shell-command "urxvtc")
   )

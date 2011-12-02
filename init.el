@@ -16,12 +16,8 @@
 
 (add-to-path 'load)                     ; initialization
 (add-to-path 'packages)                 ; additional packages
-(add-to-path 'packages/ecb-snap)
-(add-to-path 'packages/magit)
 
 (defvar prelude-dir (file-name-directory load-file-name))
-(defvar ezo-elpa (concat prelude-dir "elpa/"))
-(add-to-list 'load-path ezo-elpa)
 
 (load-init
  '(general
@@ -41,19 +37,8 @@
    gist
    lua ;; for lua-mode
    yasnippet ;; nice template system
+   aspell
    ezo))
 
-;; Non use inits
-;; rinari 
-;; rhtml 
-;; aspell
-;; cedet
-;; yasnippet ;; nice template system
-;; mutt ;; for mutt-mode
-
-;; nginx
-;; coffee
-;; scss
-;; 
 ;; For server mode
 (server-start)

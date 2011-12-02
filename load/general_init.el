@@ -6,15 +6,10 @@
 ;; disable startup screen
 (setq inhibit-startup-screen t)
 
-;; nice scrolling, emacs work slowly
-;; (setq scroll-margin 0
-;;       scroll-conservatively 100000
-;;       scroll-preserve-screen-position 1)
-
 ;; mode line settings
-(line-number-mode t)
-(column-number-mode t)
-(size-indication-mode t)
+;; (line-number-mode t)
+;; (column-number-mode t)
+;; (size-indication-mode t)
 
 ;; Ask questions with short answers
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -108,14 +103,6 @@ middle"
 (global-set-key [C-M-right] 'win-resize-minimize-vert)
 
 
-(global-set-key (kbd "M-g") 'goto-line)
-;; (global-set-key (kbd "M-?") 'help-command)
-;; (global-set-key (kbd "M-1") 'delete-other-windows)
-;; (global-set-key (kbd "M-2") 'split-window-vertically)
-;; (global-set-key (kbd "M-3") 'split-window-horizontally)
-;; (global-set-key (kbd "M-0") 'delete-window)
-;; (global-set-key (kbd "M-p") 'ecb-toggle-ecb-windows)
-
 ;; browse
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "chromium")
@@ -125,10 +112,10 @@ middle"
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 ;; update timestamp
-(add-hook 'before-save-hook 'time-stamp)
+;; (add-hook 'before-save-hook 'time-stamp)
 
 ;; don't echo passwords when communicating with interactive programs
-(add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
+;; (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 
 
 
@@ -152,14 +139,14 @@ middle"
                                          try-expand-line
                                          try-complete-lisp-symbol-partially
                                          try-complete-lisp-symbol))
+
 ;; smart indenting and pairing for all
 (electric-pair-mode t)
 (electric-indent-mode t)
 (electric-layout-mode t)
 
-;; saveplace remembers your location in a file when saving files
+
 (setq save-place-file (concat user-emacs-directory "saveplace"))
-;; activate it for all buffers
 (setq-default save-place t)
 (require 'saveplace)
 
@@ -181,16 +168,16 @@ middle"
 
 ;; time-stamps
 ;; when there's "Time-stamp: <>" in the first 10 lines of the file
-(setq time-stamp-active t
-      ;; check first 10 buffer lines for Time-stamp: <>
-      time-stamp-line-limit 10
-      time-stamp-format "%04y-%02m-%02d %02H:%02M:%02S (%u)") ; date format
-(add-hook 'write-file-hooks 'time-stamp) ; update when saving
+;; (setq time-stamp-active t
+;;       ;; check first 10 buffer lines for Time-stamp: <>
+;;       time-stamp-line-limit 10
+;;       time-stamp-format "%04y-%02m-%02d %02H:%02M:%02S (%u)") ; date format
+;; (add-hook 'write-file-hooks 'time-stamp) ; update when saving
 
 
-;; use shift + arrow keys to switch between visible buffers
+;; use alt + arrow keys to switch between visible buffers
 (require 'windmove)
-(windmove-default-keybindings 'super)
+(windmove-default-keybindings 'meta)
 
 ;; tramp, for sudo access
 (require 'tramp)
@@ -221,8 +208,8 @@ middle"
 
 (defun prelude-coding-hook ()
   "Default coding hook, useful with any programming language."
-  (flyspell-prog-mode)
   (prelude-local-comment-auto-fill)
-  ;; (prelude-turn-on-whitespace)
   (prelude-turn-on-abbrev)
+  ;; (flyspell-prog-mode)
+  ;; (prelude-turn-on-whitespace)
   (prelude-add-watchwords))
