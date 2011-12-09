@@ -65,8 +65,8 @@
 (add-to-path 'packages/markdown)
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
-(setq auto-mode-alist
-      (cons '("\\.md" . markdown-mode) auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (setq markdown-command "Markdown.pl")
 
 ;; ;; Some nice func

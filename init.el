@@ -38,6 +38,7 @@
    lua ;; for lua-mode
    yasnippet ;; nice template system
    aspell
+   nginx
    ezo))
 
 ;; For server mode
