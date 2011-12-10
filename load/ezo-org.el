@@ -2,22 +2,11 @@
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-;; (custom-set-variables
-;;  '(org-directory "~/org")
-;;  '(org-default-notes-file "~/org/notes")
-;;  )
-
-(setq org-agenda-files
-      (list "~/org/todos.org" 
-            "~/org/alisa_comments.org"
-            "~/home/ezo/org/notes.org"))
-
 ;; logging stuff
 (setq org-log-done (quote time))
 (setq org-log-into-drawer nil)
 (setq org-log-redeadline (quote note))
 (setq org-log-reschedule (quote time))
-
 
 ;; To save the clock history across Emacs sessions
 (setq org-clock-persist 'history)
@@ -39,21 +28,6 @@
 (global-font-lock-mode 1)
 (setq org-log-done t)
 
-(defun org-hotkeys()
-  (interactive)
-  (find-file "~/org/hotkey.org")
-)
-
-(defun org-notes()
-  (interactive)
-  (find-file "~/org/notes.org")
-)
-
-(defun org-agenda-file()
-  (interactive)
-  (find-file "~/org/agenda.org")
-)
-
 ;; Some hooks
 (add-hook 'org-mode-hook '(lambda () 
                             (auto-fill-mode)
@@ -61,16 +35,5 @@
                             )
           )
 
-(require 'org-publish)
-(setq org-publish-project-alist
-      '(
-        ("blog.kremenev.com"
-         :base-directory "~/org"
-         :base-extension "org"
-         :publishing-directory "~/org/public_html"
-         :recursive t
-         :publishing-function org-publish-org-to-html
-         :headline-levels 4             ; Just the default for this project.
-         :auto-preamble t
-         )
-      ))
+
+(provide 'ezo-org)

@@ -1,4 +1,3 @@
-;; Comment this, coz with this don't work feature-mode
 (add-to-path 'elpa/ruby-mode-1.1)
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
@@ -28,6 +27,11 @@
 )
 
 (add-hook 'ruby-mode-hook 'prelude-ruby-mode-hook)
+
+;; Yaml mode
+(add-to-path 'packages/yaml-mode)
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 
 ;; Load Rhtml mode
 (add-to-path 'packages/rhtml)
@@ -69,25 +73,27 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (setq markdown-command "Markdown.pl")
 
-;; ;; Some nice func
-;; (defun ruby-eval-buffer () (interactive)
-;;     "Evaluate the buffer with ruby."
-;;     (shell-command-on-region (point-min) (point-max) "ruby"))
 
-;; (defun my-ruby-mode-hook ()
-;;   (font-lock-mode t)
-;;      (setq standard-indent 2)
-;;      (ruby-electric-mode t)
-;;      (define-key ruby-mode-map "\C-c\C-a" 'ruby-eval-buffer))
-;; (add-hook 'ruby-mode-hook 'my-ruby-mode-hook)
+;; Coffee mode
+(add-to-path 'packages/coffee-mode)
+(require 'coffee-mode)
+(add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+(add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
-;; ;; Load inf-ruby(use to debug and open irb)
-;; (autoload 'run-ruby "inf-ruby"
-;;   "Run an inferior Ruby process")
-;; (autoload 'inf-ruby-keys "inf-ruby"
-;;   "Set local key defs for inf-ruby in ruby-mode")
-;; (add-hook 'ruby-mode-hook
-;;           '(lambda ()
-;;              (inf-ruby-keys)
-;;              ))
+(defun coffee-custom ()
+  "coffee-mode-hook"
+ (set (make-local-variable 'tab-width) 2))
 
+(add-hook 'coffee-mode-hook
+	  '(lambda() (coffee-custom)))
+
+;;;; CSS
+(require 'css-mode)
+
+;;;; JavaScript
+(add-to-path 'packages/js2-mode)
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+
+(provide 'ezo-ruby)

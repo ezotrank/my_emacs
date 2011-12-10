@@ -2,47 +2,11 @@
 (setq user-full-name "Maxim Kremenev")
 (setq user-mail-address "ezotrank@gmail.com")
 
-(defun autocompile ()
-  "Compile itself if this is config file"
-  (interactive)
-  (if (or
-       (string-match ".emacs.d/load/[a-z]+_init.el$" (buffer-file-name))
-       )
-      (byte-compile-file (buffer-file-name))))
-
-(defun config_compile()
-  (setq path-to-config-dir "~/.emacs.d/load")
-  (setq path-to-precompile-dir "~/.emacs.d/load/precompile")
-  "Compile all config files."
-  (interactive nil)
-  (shell-command
-   ;; (format "cd %s && rm *" path-to-precompile-dir)
-   ;; (format "emacs -L . -batch -f batch-byte-compile *.el" path-to-config-dir)
-   ;; (format "emacs -L . -batch -f batch-byte-compile *.el")
-   )
-)
-
-(defun remove_precompile_config()
-  (setq path-to-config-dir "~/.emacs/load")
-  "Remove all *.elc from load direcotry"
-  (interactive nil)
-  (shell-command "rm *.elc" path-to-config-dir)
-  )
-
-(defun package_compile()
-  (setq path-to-package-dir "~/.emacs/packages")
-  "Compile all package files."
-  (interactive nil)
-  (shell-command
-   (format "emacs -L . -batch -f batch-byte-compile *.el" path-to-package-dir)
-   )
-)
-
 (defun restart-snippets()
   "Restart Emacs snippets"
   (interactive)
   (load-file "~/.emacs.d/load/yasnippet_init.el")
-)
+  )
 
 ;; Kill emacs daemon but save session
 (defun my-kill-emacs ()
@@ -51,6 +15,7 @@
   (desktop-save-in-desktop-dir)
   (kill-emacs))
 (global-set-key (kbd "C-x c") 'my-kill-emacs)
+
 
 (defun delete-file-and-buffer ()
   "Kills the current buffer and deletes the file it is visiting"
@@ -158,3 +123,6 @@ file of a buffer in an external program."
         (delete-file filename)
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
+
+
+(provide 'ezo-fun)

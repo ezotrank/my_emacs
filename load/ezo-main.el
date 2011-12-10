@@ -6,11 +6,6 @@
 ;; disable startup screen
 (setq inhibit-startup-screen t)
 
-;; mode line settings
-;; (line-number-mode t)
-;; (column-number-mode t)
-;; (size-indication-mode t)
-
 ;; Ask questions with short answers
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -107,17 +102,6 @@ middle"
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "chromium")
 
-;; this is also of interest, it auto-magically does a "chmod u+x"
-;; when you save a script file (starting with "#!")
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
-
-;; update timestamp
-;; (add-hook 'before-save-hook 'time-stamp)
-
-;; don't echo passwords when communicating with interactive programs
-;; (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
-
-
 
 ;; store all backup and autosave files in the tmp dir
 (setq backup-directory-alist
@@ -166,15 +150,6 @@ middle"
       recentf-max-menu-items 15)
 (recentf-mode t)
 
-;; time-stamps
-;; when there's "Time-stamp: <>" in the first 10 lines of the file
-;; (setq time-stamp-active t
-;;       ;; check first 10 buffer lines for Time-stamp: <>
-;;       time-stamp-line-limit 10
-;;       time-stamp-format "%04y-%02m-%02d %02H:%02M:%02S (%u)") ; date format
-;; (add-hook 'write-file-hooks 'time-stamp) ; update when saving
-
-
 ;; use alt + arrow keys to switch between visible buffers
 (require 'windmove)
 (windmove-default-keybindings 'meta)
@@ -188,28 +163,4 @@ middle"
 (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
       bookmark-save-flag 1)
 
-(defun prelude-add-watchwords ()
-  (font-lock-add-keywords
-   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\|OPTIMIZE\\):"
-          1 font-lock-warning-face t))))
-
-(defun prelude-local-comment-auto-fill ()
-  (set (make-local-variable 'comment-auto-fill-only-comments) t)
-  (auto-fill-mode t))
-
-(defun prelude-turn-on-whitespace ()
-  (whitespace-mode +1))
-
-(defun prelude-turn-off-whitespace ()
-  (whitespace-mode -1))
-
-(defun prelude-turn-on-abbrev ()
-  (abbrev-mode +1))
-
-(defun prelude-coding-hook ()
-  "Default coding hook, useful with any programming language."
-  (prelude-local-comment-auto-fill)
-  (prelude-turn-on-abbrev)
-  ;; (flyspell-prog-mode)
-  ;; (prelude-turn-on-whitespace)
-  (prelude-add-watchwords))
+(provide 'ezo-main)

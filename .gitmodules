@@ -13,3 +13,21 @@
 [submodule "packages/markdown"]
 	path = packages/markdown
 	url = git://jblevins.org/git/markdown-mode.git
+[submodule "packages/gist"]
+	path = packages/gist
+	url = git://github.com/defunkt/gist.el.git
+[submodule "packages/yaml-mode"]
+	path = packages/yaml-mode
+	url = git://github.com/yoshiki/yaml-mode.git
+[submodule "packages/nginx-mode"]
+	path = packages/nginx-mode
+	url = git://github.com/ajc/nginx-mode.git
+[submodule "packages/js2-mode"]
+	path = packages/js2-mode
+	url = git://github.com/mooz/js2-mode.git
+[submodule "packages/coffee-mode"]
+	path = packages/coffee-mode
+	url = git://github.com/defunkt/coffee-mode.git
+[submodule "packages/lua-mode"]
+	path = packages/lua-mode
+	url = git://github.com/immerrr/lua-mode.git

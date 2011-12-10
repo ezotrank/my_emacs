@@ -1,6 +1,0 @@
-(require 'pastie)
-(global-set-key (kbd "C-x p r") 'pastie-buffer)
-(global-set-key (kbd "C-x p b") 'pastie-region)
-(global-set-key (kbd "C-x p o") 'pastie-browse)
-(global-set-key (kbd "C-x p g") 'pastie-get)
-(require 'gist)

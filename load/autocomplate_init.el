@@ -1,7 +1,0 @@
-(add-to-path 'packages/auto-complete)
-(require 'auto-complete)
-(require 'auto-complete-config)
-(add-to-path 'packages/auto-complete/dict)
-(ac-config-default)
-(setq ac-auto-show-menu nil)
-(global-auto-complete-mode t)

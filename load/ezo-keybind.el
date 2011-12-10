@@ -34,3 +34,6 @@
                                   (message "Arrow key navigation is disabled. Use C-f instead.")))
 
 (global-set-key (kbd "M-g") 'goto-line)
+
+
+(provide 'ezo-keybind)
