@@ -1,3 +1,5 @@
+(global-set-key (kbd "M-TAB") 'indent-region)
+
 ;; Start eshell or switch to it if it's active.
 (global-set-key (kbd "C-x m") 'eshell)
 

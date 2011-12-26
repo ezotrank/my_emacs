@@ -1,3 +1,10 @@
+;; Yeah.....
+(setq select-active-regions nil)
+(setq mouse-drag-copy-region t)
+(setq x-select-enable-primary t)
+(setq x-select-enable-clipboard nil)
+(global-set-key [mouse-2] 'mouse-yank-at-click)
+
 ;; Don't need in console version
 (tool-bar-mode -1)           ;; Disable up toolbar
 (scroll-bar-mode -1)         ;; Disable vertical scroll bar

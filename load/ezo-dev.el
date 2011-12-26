@@ -1,16 +1,19 @@
 ;;;; Gist
 (add-to-path 'packages/gist)
 (require 'gist)
-;; (setq gist-view-gist t)
+(setq gist-view-gist 1)
 
 ;;;; Autocomplete
 (add-to-path 'packages/auto-complete)
 (require 'auto-complete)
 (require 'auto-complete-config)
-(add-to-path 'packages/auto-complete/dict)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/packages/auto-complete/dict")
 (ac-config-default)
-(setq ac-auto-show-menu nil)
+(setq ac-menu-height 10)
 (global-auto-complete-mode t)
+
+(setq ac-auto-show-menu nil)
+(setq ac-auto-show-menu 10)
 
 ;;;; Linum
 (require 'linum+)
@@ -179,7 +182,7 @@
   (prelude-local-comment-auto-fill)
   (prelude-turn-on-abbrev)
   ;; (flyspell-prog-mode)
-  ;; (prelude-turn-on-whitespace)
+  (prelude-turn-on-whitespace)
   (prelude-add-watchwords))
 
 
