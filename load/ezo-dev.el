@@ -50,6 +50,10 @@
 (add-to-path 'packages/magit)
 (require 'magit)
 
+;;;; Edit Shell scripts
+(add-to-list 'auto-mode-alist '("\\.sh$" . sh-mode))
+(add-to-list 'auto-mode-alist '("\\.zsh$" . sh-mode))
+
 ;;;; Eshell
 (setq
  eshell-cmpl-cycle-completions nil
@@ -116,7 +120,6 @@
 (column-number-mode 1)
 (size-indication-mode 1)
 
-
 ;;;; Buffplus
 (require 'buff-menu+)
 
@@ -137,21 +140,20 @@
   (interactive)
   (flyspell-mode +1))
 
-
 ;;;; Ecb
-(setq stack-trace-on-error nil)
-(add-to-list 'load-path "~/.emacs.d/elpa/ecb_snap-20110605")
-(require 'ecb)
-(ecb-byte-compile)
-(setq imenu-auto-rescan 1)
-(custom-set-variables
- '(ecb-tip-of-the-day nil)
- '(ecb-options-version "2.40")
- '(ecb-layout-name "left14")
-  '(ecb-layout-window-sizes (quote (("left14" (ecb-directories-buffer-name 0.1893491124260355 . 0.37209302325581395) (ecb-history-buffer-name 0.1893491124260355 . 0.6046511627906976)))))
- '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
- '(inhibit-startup-screen t)
-)
+;; (setq stack-trace-on-error nil)
+;; (add-to-list 'load-path "~/.emacs.d/elpa/ecb_snap-20110605")
+;; (require 'ecb)
+;; (ecb-byte-compile)
+;; (setq imenu-auto-rescan 1)
+;; (custom-set-variables
+;;  '(ecb-tip-of-the-day nil)
+;;  '(ecb-options-version "2.40")
+;;  '(ecb-layout-name "left14")
+;;   '(ecb-layout-window-sizes (quote (("left14" (ecb-directories-buffer-name 0.1893491124260355 . 0.37209302325581395) (ecb-history-buffer-name 0.1893491124260355 . 0.6046511627906976)))))
+;;  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+;;  '(inhibit-startup-screen t)
+;; )
 
 ;;;; Else
 
@@ -180,10 +182,9 @@
 (defun prelude-coding-hook ()
   "Default coding hook, useful with any programming language."
   (prelude-local-comment-auto-fill)
-  (prelude-turn-on-abbrev)
+  ;; (prelude-turn-on-abbrev)
   ;; (flyspell-prog-mode)
-  (prelude-turn-on-whitespace)
+  ;; (prelude-turn-on-whitespace)
   (prelude-add-watchwords))
-
 
 (provide 'ezo-dev)
