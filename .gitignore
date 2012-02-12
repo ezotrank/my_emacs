@@ -12,3 +12,4 @@ elpa
 /savehist
 /saveplace
 auto-save-list
+/%backup%~
