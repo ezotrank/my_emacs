@@ -124,5 +124,4 @@ file of a buffer in an external program."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
-
 (provide 'ezo-fun)
