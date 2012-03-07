@@ -20,9 +20,7 @@
 (require 'ruby-block)
 
 (defun prelude-ruby-mode-hook ()
-  (prelude-coding-hook)
   ;; turn off the annoying input echo in irb
-  (setq comint-process-echoes t)
   (ruby-block-mode t)
 )
 
@@ -73,6 +71,19 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (setq markdown-command "Markdown.pl")
 
+;;;; CSS
+(require 'css-mode)
+
+;;;; SCSS
+(add-to-path 'packages/scss-mode)
+(autoload 'scss-mode "scss-mode")
+(add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
+(setq scss-compile-at-save nil)
+
+;;;; JavaScript
+(add-to-path 'packages/js2-mode)
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; Coffee mode
 (add-to-path 'packages/coffee-mode)
@@ -86,14 +97,5 @@
 
 (add-hook 'coffee-mode-hook
 	  '(lambda() (coffee-custom)))
-
-;;;; CSS
-(require 'css-mode)
-
-;;;; JavaScript
-(add-to-path 'packages/js2-mode)
-(autoload 'js2-mode "js2-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
 
 (provide 'ezo-ruby)

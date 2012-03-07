@@ -24,7 +24,7 @@
 (show-paren-mode t)
 (setq show-paren-style 'parenthesis)
 
-;; Set a font 
+;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
                             (font . "Inconsolata-11")
                             (left-fringe . -1)

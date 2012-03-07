@@ -21,6 +21,11 @@
 ;; toggle menu-bar visibility
 (global-set-key (kbd "<f12>") 'menu-bar-mode)
 
+;; I don't like Ctrl-Z
+(global-set-key (kbd "C-z") (lambda ()
+                               (interactive)
+                               (message "Brrrr... C-z")))
+
 ;; real Emacs hackers don't use the arrow keys
 (global-set-key (kbd "<up>") (lambda ()
                                (interactive)

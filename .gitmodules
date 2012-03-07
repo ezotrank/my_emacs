@@ -31,3 +31,6 @@
 [submodule "packages/lua-mode"]
 	path = packages/lua-mode
 	url = git://github.com/immerrr/lua-mode.git
+[submodule "packages/scss-mode"]
+	path = packages/scss-mode
+	url = https://github.com/antonj/scss-mode.git

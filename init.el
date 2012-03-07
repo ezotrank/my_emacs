@@ -22,6 +22,3 @@
 (require 'ezo-fun)
 (require 'ezo-misc)
 (require 'ezo-keybind)
-
-;; For server mode
-(server-start)

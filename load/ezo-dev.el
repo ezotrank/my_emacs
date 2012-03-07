@@ -19,19 +19,23 @@
 (require 'linum+)
 (setq linum-format "%d ")
 (add-hook 'emacs-lisp-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
 (add-hook 'yaml-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
 (add-hook 'html-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
 (add-hook 'ruby-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
 (add-hook 'feature-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
 (add-hook 'rspec-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
 (add-hook 'haml-mode-hook
-     '(lambda() (linum-mode 1)))
+	  '(lambda() (linum-mode 1)))
+(add-hook 'shell-mode-hook
+	  '(lambda() (linum-mode 1)))
+(add-hook 'css-mode-hook
+	  '(lambda() (linum-mode 1)))
 
 ;;;; IDO
 (require 'ido)
@@ -129,62 +133,10 @@
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/packages/yasnippet/snippets")
 
-;;;; Aspell
-;; flyspell-mode does spell-checking on the fly as you type
-(setq ispell-program-name "aspell" ; use aspell instead of ispell
-      ispell-extra-args '("--sug-mode=ultra"))
-(autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
-
-(defun prelude-turn-on-flyspell ()
-  "Force flyspell-mode on using a positive argument.  For use in hooks."
-  (interactive)
-  (flyspell-mode +1))
-
-;;;; Ecb
-;; (setq stack-trace-on-error nil)
-;; (add-to-list 'load-path "~/.emacs.d/elpa/ecb_snap-20110605")
-;; (require 'ecb)
-;; (ecb-byte-compile)
-;; (setq imenu-auto-rescan 1)
-;; (custom-set-variables
-;;  '(ecb-tip-of-the-day nil)
-;;  '(ecb-options-version "2.40")
-;;  '(ecb-layout-name "left14")
-;;   '(ecb-layout-window-sizes (quote (("left14" (ecb-directories-buffer-name 0.1893491124260355 . 0.37209302325581395) (ecb-history-buffer-name 0.1893491124260355 . 0.6046511627906976)))))
-;;  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
-;;  '(inhibit-startup-screen t)
-;; )
-
 ;;;; Else
 
 ;; this is also of interest, it auto-magically does a "chmod u+x"
 ;; when you save a script file (starting with "#!")
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
-
-(defun prelude-add-watchwords ()
-  (font-lock-add-keywords
-   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\|OPTIMIZE\\):"
-          1 font-lock-warning-face t))))
-
-(defun prelude-local-comment-auto-fill ()
-  (set (make-local-variable 'comment-auto-fill-only-comments) t)
-  (auto-fill-mode t))
-
-(defun prelude-turn-on-whitespace ()
-  (whitespace-mode +1))
-
-(defun prelude-turn-off-whitespace ()
-  (whitespace-mode -1))
-
-(defun prelude-turn-on-abbrev ()
-  (abbrev-mode +1))
-
-(defun prelude-coding-hook ()
-  "Default coding hook, useful with any programming language."
-  (prelude-local-comment-auto-fill)
-  ;; (prelude-turn-on-abbrev)
-  ;; (flyspell-prog-mode)
-  ;; (prelude-turn-on-whitespace)
-  (prelude-add-watchwords))
 
 (provide 'ezo-dev)
