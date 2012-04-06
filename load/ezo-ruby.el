@@ -1,4 +1,7 @@
-(add-to-path 'elpa/ruby-mode-1.1)
+(add-to-path 'packages/enhanced-ruby-mode)
+(setq enh-ruby-program "/home/ezo/.rvm/rubies/ruby-1.9.3-head/bin/ruby") ; so that still works if ruby points to ruby1.8
+(require 'ruby-mode)
+
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
@@ -11,15 +14,16 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; For brackets and nice ruby code style
-(add-to-path 'elpa/ruby-electric-1.1)
+(add-to-path 'packages/ruby-electric)
 (require 'ruby-electric)
 
 ;; For insert end
-(add-to-path 'elpa/ruby-end-0.0.2)
+(add-to-path 'packages/ruby-end)
 (require 'ruby-end)
 (require 'ruby-block)
 
 (defun prelude-ruby-mode-hook ()
+  (prelude-coding-hook)
   ;; turn off the annoying input echo in irb
   (ruby-block-mode t)
 )
@@ -52,12 +56,16 @@
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
 ;; Load HAML mode
-(add-to-path 'elpa/haml-mode-3.0.14)
+(add-to-path 'packages/haml-mode)
 (require 'haml-mode)
 (add-hook 'haml-mode-hook
           '(lambda ()
              (setq indent-tabs-mode nil)
-             (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+             (define-key haml-mode-map "\C-m" 'newline-and-indent)
+	     (prelude-turn-on-whitespace)
+	     ))
+
+(require 'slim-mode)
 
 ;; Load Rspec mode
 (add-to-path 'packages/rspec)
@@ -93,9 +101,37 @@
 
 (defun coffee-custom ()
   "coffee-mode-hook"
- (set (make-local-variable 'tab-width) 2))
 
-(add-hook 'coffee-mode-hook
-	  '(lambda() (coffee-custom)))
+    ;; CoffeeScript uses two spaces.
+  (set (make-local-variable 'tab-width) 2)
+
+  ;; If you don't have js2-mode
+  (setq coffee-js-mode 'javascript-mode)
+
+  ;; If you don't want your compiled files to be wrapped
+  (setq coffee-args-compile '("-c" "--bare"))
+
+  ;; *Messages* spam
+  (setq coffee-debug-mode t)
+
+  ;; electric-indent doesn't play nice with coffee-mode's "smart"
+  ;; indent
+  (electric-indent-mode -1)
+
+  ;; Emacs key binding
+  ;; (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
+
+  ;; Riding edge.
+  ;; (setq coffee-command "~/dev/coffee")
+
+  ;; Compile '.coffee' files on every save
+  ;; (and (file-exists-p (buffer-file-name))
+  ;;      (file-exists-p (coffee-compiled-file-name))
+  ;;      (coffee-cos-mode t)))
+
+  (prelude-turn-on-whitespace)
+  )
+(add-hook 'coffee-mode-hook 'coffee-custom)
+
 
 (provide 'ezo-ruby)

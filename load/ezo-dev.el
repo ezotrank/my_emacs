@@ -1,7 +1,8 @@
 ;;;; Gist
 (add-to-path 'packages/gist)
 (require 'gist)
-(setq gist-view-gist 1)
+(setq gist-use-curl t)
+(setq gist-view-gist t)
 
 ;;;; Autocomplete
 (add-to-path 'packages/auto-complete)
@@ -18,24 +19,28 @@
 ;;;; Linum
 (require 'linum+)
 (setq linum-format "%d ")
-(add-hook 'emacs-lisp-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'yaml-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'html-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'ruby-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'feature-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'rspec-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'haml-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'shell-mode-hook
-	  '(lambda() (linum-mode 1)))
-(add-hook 'css-mode-hook
-	  '(lambda() (linum-mode 1)))
+;; (add-hook 'emacs-lisp-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'yaml-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'html-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'ruby-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'feature-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'rspec-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'haml-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'shell-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'css-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'scss-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
+;; (add-hook 'coffee-mode-hook
+;; 	  '(lambda() (linum-mode 1)))
 
 ;;;; IDO
 (require 'ido)
@@ -132,6 +137,32 @@
 (require 'yasnippet)
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/packages/yasnippet/snippets")
+
+
+(defun prelude-add-watchwords ()
+  (font-lock-add-keywords
+   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\|OPTIMIZE\\):"
+          1 font-lock-warning-face t))))
+
+(defun prelude-local-comment-auto-fill ()
+  (set (make-local-variable 'comment-auto-fill-only-comments) t)
+  (auto-fill-mode t))
+
+(defun prelude-turn-on-whitespace ()
+  (whitespace-mode +1))
+
+(defun prelude-turn-off-whitespace ()
+  (whitespace-mode -1))
+
+(defun prelude-turn-on-abbrev ()
+  (abbrev-mode +1))
+
+(defun prelude-coding-hook ()
+  "Default coding hook, useful with any programming language."
+  (prelude-local-comment-auto-fill)
+  (prelude-turn-on-abbrev)
+  ;; (prelude-turn-on-whitespace)
+  (prelude-add-watchwords))
 
 ;;;; Else
 

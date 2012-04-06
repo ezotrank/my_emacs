@@ -83,6 +83,12 @@ file of a buffer in an external program."
         (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
 
+(defun reload-current-config()
+  "Reload current config file"
+  (interactive)
+  (load-file (buffer-file-name))
+  )
+
 (defun prelude-rename-file-and-buffer ()
   "Renames current buffer and file it is visiting."
   (interactive)
@@ -102,7 +108,10 @@ file of a buffer in an external program."
 (defun open-developer-screen ()
   "Open the developer screen"
   (interactive nil)
-  (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev")
+  (if (file-exists-p ".screenrc")
+      (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev -c .screenrc")
+    (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev")
+      )
   )
 
 (defun open-urxvtc ()

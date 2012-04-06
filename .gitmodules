@@ -34,3 +34,15 @@
 [submodule "packages/scss-mode"]
 	path = packages/scss-mode
 	url = https://github.com/antonj/scss-mode.git
+[submodule "packages/haml-mode"]
+	path = packages/haml-mode
+	url = git://github.com/nex3/haml-mode.git
+[submodule "packages/ruby-electric"]
+	path = packages/ruby-electric
+	url = git://github.com/qoobaa/ruby-electric.git
+[submodule "packages/enhanced-ruby-mode"]
+	path = packages/enhanced-ruby-mode
+	url = git://github.com/jacott/Enhanced-Ruby-Mode.git
+[submodule "packages/ruby-end"]
+	path = packages/ruby-end
+	url = git://github.com/rejeep/ruby-end.git

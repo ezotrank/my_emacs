@@ -1,4 +1,4 @@
-;; Yeah.....
+;; Yeah..... Mouse tricks
 (setq select-active-regions nil)
 (setq mouse-drag-copy-region t)
 (setq x-select-enable-primary t)
