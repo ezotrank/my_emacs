@@ -1,6 +1,8 @@
 (add-to-path 'packages/enhanced-ruby-mode)
+(load-file "~/.emacs.d/packages/ruby-mode-origin.el") 
 (setq enh-ruby-program "/home/ezo/.rvm/rubies/ruby-1.9.3-head/bin/ruby") ; so that still works if ruby points to ruby1.8
-(require 'ruby-mode)
+(load-library "ruby-mode")
+;; (require 'ruby-mode)
 
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
