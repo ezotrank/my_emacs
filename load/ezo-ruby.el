@@ -1,8 +1,4 @@
-(add-to-path 'packages/enhanced-ruby-mode)
-(load-file "~/.emacs.d/packages/ruby-mode-origin.el") 
-(setq enh-ruby-program "/home/ezo/.rvm/rubies/ruby-1.9.3-head/bin/ruby") ; so that still works if ruby points to ruby1.8
-(load-library "ruby-mode")
-;; (require 'ruby-mode)
+(require 'ruby-mode)
 
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
@@ -16,29 +12,29 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; For brackets and nice ruby code style
-(add-to-path 'packages/ruby-electric)
+(add-to-path 'git-modules/ruby-electric)
 (require 'ruby-electric)
 
 ;; For insert end
-(add-to-path 'packages/ruby-end)
+(add-to-path 'git-modules/ruby-end)
 (require 'ruby-end)
 (require 'ruby-block)
 
-(defun prelude-ruby-mode-hook ()
-  (prelude-coding-hook)
-  ;; turn off the annoying input echo in irb
-  (ruby-block-mode t)
-)
+(defun ruby-coding-hook ()
+  (prelude-local-comment-auto-fill)
+  (prelude-turn-on-abbrev)
+  (prelude-add-watchwords)
+  )
 
-(add-hook 'ruby-mode-hook 'prelude-ruby-mode-hook)
+(add-hook 'ruby-mode-hook 'ruby-coding-hook)
 
 ;; Yaml mode
-(add-to-path 'packages/yaml-mode)
+(add-to-path 'git-modules/yaml-mode)
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 
 ;; Load Rhtml mode
-(add-to-path 'packages/rhtml)
+(add-to-path 'git-modules/rhtml-mode)
 (require 'rhtml-mode)
 (add-to-list 'auto-mode-alist '("\\.erb$" . rhtml-mode))
 (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
@@ -51,14 +47,14 @@
           )
 
 ;; Load Cucumber mode
-(add-to-path 'packages/cucumber)
+(add-to-path 'git-modules/cucumber)
 (require 'feature-mode)
 (setq feature-default-language "en")
 (setq feature-default-i18n-file "~/.emacs.d/packages/cucumber/i18n.yml")
 (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
 ;; Load HAML mode
-(add-to-path 'packages/haml-mode)
+(add-to-path 'git-modules/haml-mode)
 (require 'haml-mode)
 (add-hook 'haml-mode-hook
           '(lambda ()
@@ -70,11 +66,11 @@
 (require 'slim-mode)
 
 ;; Load Rspec mode
-(add-to-path 'packages/rspec)
+(add-to-path 'git-modules/rspec)
 (require 'mode-compile)
 (require 'rspec-mode)
 
-(add-to-path 'packages/markdown)
+(add-to-path 'git-modules/markdown)
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
@@ -85,18 +81,18 @@
 (require 'css-mode)
 
 ;;;; SCSS
-(add-to-path 'packages/scss-mode)
+(add-to-path 'git-modules/scss-mode)
 (autoload 'scss-mode "scss-mode")
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 (setq scss-compile-at-save nil)
 
 ;;;; JavaScript
-(add-to-path 'packages/js2-mode)
+(add-to-path 'git-modules/js2-mode)
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; Coffee mode
-(add-to-path 'packages/coffee-mode)
+(add-to-path 'git-modules/coffee-mode)
 (require 'coffee-mode)
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))

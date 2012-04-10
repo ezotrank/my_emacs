@@ -1,5 +1,5 @@
 ;; provide a useful error trace if loading this .emacs fails
-(setq debug-on-error nil)
+(setq debug-on-error t)
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")
   (require 'site-gentoo)
@@ -13,8 +13,11 @@
 
 (defvar prelude-dir (file-name-directory load-file-name))
 (defvar prelude-modules-dir (concat prelude-dir "load/"))
+(defvar prelude-vendor-dir (concat prelude-dir "vendor/"))
 
+(add-to-list 'load-path prelude-vendor-dir)
 (add-to-list 'load-path prelude-modules-dir)
+(require 'ezo-packages)
 (require 'ezo-main)
 (require 'ezo-dev)
 (require 'ezo-ruby)

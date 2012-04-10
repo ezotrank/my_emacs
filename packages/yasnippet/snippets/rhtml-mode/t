@@ -1,4 +1,0 @@
-#-*- require-final-newline: nil -*-
-#name : <%= t(:word) %>
-# --
-<%= t(:${comment}) %>$0

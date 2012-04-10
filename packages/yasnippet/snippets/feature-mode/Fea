@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-#name: Feature
-# --
-Feature: ${1:name}
-  $0

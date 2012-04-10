@@ -1,14 +1,14 @@
 ;;;; Gist
-(add-to-path 'packages/gist)
 (require 'gist)
 (setq gist-use-curl t)
 (setq gist-view-gist t)
 
 ;;;; Autocomplete
-(add-to-path 'packages/auto-complete)
+(add-to-path 'git-modules/auto-complete)
+(add-to-path 'git-modules/popup)
 (require 'auto-complete)
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/packages/auto-complete/dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/git-modules/auto-complete/dict")
 (ac-config-default)
 (setq ac-menu-height 10)
 (global-auto-complete-mode t)
@@ -19,28 +19,6 @@
 ;;;; Linum
 (require 'linum+)
 (setq linum-format "%d ")
-;; (add-hook 'emacs-lisp-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'yaml-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'html-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'ruby-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'feature-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'rspec-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'haml-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'shell-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'css-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'scss-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
-;; (add-hook 'coffee-mode-hook
-;; 	  '(lambda() (linum-mode 1)))
 
 ;;;; IDO
 (require 'ido)
@@ -56,7 +34,7 @@
 (set-default 'imenu-auto-rescan t)
 
 ;;;; Magit
-(add-to-path 'packages/magit)
+(add-to-path 'git-modules/magit)
 (require 'magit)
 
 ;;;; Edit Shell scripts
@@ -133,10 +111,10 @@
 (require 'buff-menu+)
 
 ;;;; Yasnippets
-(add-to-path 'packages/yasnippet)
+(add-to-path 'git-modules/yasnippet)
 (require 'yasnippet)
 (yas/initialize)
-(yas/load-directory "~/.emacs.d/packages/yasnippet/snippets")
+(yas/load-directory "~/.emacs.d/git-modules/yasnippet/snippets")
 
 
 (defun prelude-add-watchwords ()
@@ -161,7 +139,7 @@
   "Default coding hook, useful with any programming language."
   (prelude-local-comment-auto-fill)
   (prelude-turn-on-abbrev)
-  ;; (prelude-turn-on-whitespace)
+  (prelude-turn-on-whitespace)
   (prelude-add-watchwords))
 
 ;;;; Else

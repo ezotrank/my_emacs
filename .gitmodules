@@ -1,48 +1,57 @@
-[submodule "packages/auto-complete"]
-	path = packages/auto-complete
+[submodule "git-modules/auto-complete"]
+	path = git-modules/auto-complete
 	url = git://github.com/m2ym/auto-complete.git
-[submodule "packages/magit"]
-	path = packages/magit
+[submodule "git-modules/magit"]
+	path = git-modules/magit
 	url = git://github.com/magit/magit.git
-[submodule "packages/rspec"]
-	path = packages/rspec
+[submodule "git-modules/rspec"]
+	path = git-modules/rspec
 	url = git://github.com/pezra/rspec-mode.git
-[submodule "packages/org"]
-	path = packages/org
+[submodule "git-modules/org"]
+	path = git-modules/org
 	url = git://github.com/emacsmirror/org.git
-[submodule "packages/markdown"]
-	path = packages/markdown
+[submodule "git-modules/markdown"]
+	path = git-modules/markdown
 	url = git://jblevins.org/git/markdown-mode.git
-[submodule "packages/gist"]
-	path = packages/gist
-	url = git://github.com/defunkt/gist.el.git
-[submodule "packages/yaml-mode"]
-	path = packages/yaml-mode
+[submodule "git-modules/yaml-mode"]
+	path = git-modules/yaml-mode
 	url = git://github.com/yoshiki/yaml-mode.git
-[submodule "packages/nginx-mode"]
-	path = packages/nginx-mode
+[submodule "git-modules/nginx-mode"]
+	path = git-modules/nginx-mode
 	url = git://github.com/ajc/nginx-mode.git
-[submodule "packages/js2-mode"]
-	path = packages/js2-mode
+[submodule "git-modules/js2-mode"]
+	path = git-modules/js2-mode
 	url = git://github.com/mooz/js2-mode.git
-[submodule "packages/coffee-mode"]
-	path = packages/coffee-mode
+[submodule "git-modules/coffee-mode"]
+	path = git-modules/coffee-mode
 	url = git://github.com/defunkt/coffee-mode.git
-[submodule "packages/lua-mode"]
-	path = packages/lua-mode
+[submodule "git-modules/lua-mode"]
+	path = git-modules/lua-mode
 	url = git://github.com/immerrr/lua-mode.git
-[submodule "packages/scss-mode"]
-	path = packages/scss-mode
-	url = https://github.com/antonj/scss-mode.git
-[submodule "packages/haml-mode"]
-	path = packages/haml-mode
+[submodule "git-modules/scss-mode"]
+	path = git-modules/scss-mode
+	url = git://github.com/antonj/scss-mode.git
+[submodule "git-modules/haml-mode"]
+	path = git-modules/haml-mode
 	url = git://github.com/nex3/haml-mode.git
-[submodule "packages/ruby-electric"]
-	path = packages/ruby-electric
+[submodule "git-modules/ruby-electric"]
+	path = git-modules/ruby-electric
 	url = git://github.com/qoobaa/ruby-electric.git
-[submodule "packages/enhanced-ruby-mode"]
-	path = packages/enhanced-ruby-mode
-	url = git://github.com/jacott/Enhanced-Ruby-Mode.git
-[submodule "packages/ruby-end"]
-	path = packages/ruby-end
+[submodule "git-modules/ruby-end"]
+	path = git-modules/ruby-end
 	url = git://github.com/rejeep/ruby-end.git
+[submodule "git-modules/melpa"]
+	path = git-modules/melpa
+	url = git://github.com/milkypostman/melpa.git
+[submodule "markdown-mode"]
+	path = markdown-mode
+	url = git://jblevins.org/git/markdown-mode.git
+[submodule "git-modules/rhtml-mode"]
+	path = git-modules/rhtml-mode
+	url = git://github.com/eschulte/rhtml.git
+[submodule "git-modules/cucumber"]
+	path = git-modules/cucumber
+	url = git://github.com/michaelklishin/cucumber.el.git
+[submodule "git-modules/popup"]
+	path = git-modules/popup
+	url = git://github.com/m2ym/popup-el.git

@@ -1,4 +1,4 @@
-(add-to-path 'packages/org/lisp)
+(add-to-path 'org-modules/org/lisp)
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 

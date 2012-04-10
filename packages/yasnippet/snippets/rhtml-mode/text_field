@@ -1,4 +1,0 @@
-#name : <%= f.text_field :field %>
-# --
-<%= f.text_field ${:field} %>
-$0
