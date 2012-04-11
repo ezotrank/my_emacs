@@ -142,10 +142,23 @@
   (prelude-turn-on-whitespace)
   (prelude-add-watchwords))
 
+(defun comment-or-uncomment-current-line-or-region ()
+  "Comments or uncomments current current line or whole lines in region."
+  (interactive)
+  (save-excursion
+    (let (min max)
+      (if (region-active-p)
+          (setq min (region-beginning) max (region-end))
+        (setq min (point) max (point)))
+      (comment-or-uncomment-region
+       (progn (goto-char min) (line-beginning-position))
+       (progn (goto-char max) (line-end-position))))))
+
 ;;;; Else
 
 ;; this is also of interest, it auto-magically does a "chmod u+x"
 ;; when you save a script file (starting with "#!")
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+
 
 (provide 'ezo-dev)
