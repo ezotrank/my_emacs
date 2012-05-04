@@ -108,10 +108,11 @@ file of a buffer in an external program."
 (defun open-developer-screen ()
   "Open the developer screen"
   (interactive nil)
-  (if (file-exists-p ".screenrc")
-      (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev -c .screenrc")
-    (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev")
-      )
+  (shell-command "tmux")
+  ;; (if (file-exists-p ".screenrc")
+  ;;     (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev -c .screenrc")
+  ;;   (shell-command "urxvtc -name EmacsDevScreen +sb -e screen -S dev")
+  ;;     )
   )
 
 (defun open-urxvtc ()
