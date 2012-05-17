@@ -21,7 +21,6 @@
 (require 'ruby-block)
 
 (defun ruby-coding-hook ()
-  (prelude-local-comment-auto-fill)
   (prelude-turn-on-abbrev)
   (prelude-add-watchwords)
   )

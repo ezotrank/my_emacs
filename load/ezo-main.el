@@ -20,10 +20,6 @@
 (add-to-list 'custom-theme-load-path (concat prelude-dir "themes/"))
 (load-theme 'zenburn t)
 
-;to highlight ( and )
-(show-paren-mode t)
-(setq show-paren-style 'parenthesis)
-
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
                             (font . "Inconsolata-11")
@@ -136,7 +132,6 @@ middle"
 (electric-indent-mode t)
 (electric-layout-mode t)
 
-
 (setq save-place-file (concat user-emacs-directory "saveplace"))
 (setq-default save-place t)
 (require 'saveplace)
@@ -169,5 +164,96 @@ middle"
 ;; bookmarks
 (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
       bookmark-save-flag 1)
+
+(defun prelude-indent-buffer ()
+  "Indents the entire buffer."
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
+(defun prelude-indent-region-or-buffer ()
+  "Indents a region if selected, otherwise the whole buffer."
+  (interactive)
+  (save-excursion
+    (if (region-active-p)
+        (progn
+          (indent-region (region-beginning) (region-end))
+          (message "Indented selected region."))
+      (progn
+        (prelude-indent-buffer)
+        (message "Indented buffer.")))))
+
+(defun prelude-copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+;; TODO doesn't work with uniquify
+(defun prelude-rename-file-and-buffer ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (message "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (cond ((get-buffer new-name)
+               (message "A buffer named '%s' already exists!" new-name))
+              (t
+               (rename-file name new-name 1)
+               (rename-buffer new-name)
+               (set-visited-file-name new-name)
+               (set-buffer-modified-p nil)))))))
+
+(defun prelude-delete-file-and-buffer ()
+  "Kills the current buffer and deletes the file it is visiting"
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (delete-file filename)
+      (message "Deleted file %s" filename)))
+  (kill-buffer))
+
+(defun prelude-turn-on-whitespace ()
+  (whitespace-mode +1))
+
+(defun prelude-turn-off-whitespace ()
+  (whitespace-mode -1))
+
+(defun prelude-turn-on-abbrev ()
+  (abbrev-mode +1))
+
+(defun prelude-turn-off-abbrev ()
+  (abbrev-mode -1))
+
+(defun prelude-untabify-buffer ()
+  (interactive)
+  (untabify (point-min) (point-max)))
+
+(defun prelude-cleanup-buffer ()
+  "Perform a bunch of operations on the whitespace content of a buffer."
+  (interactive)
+  (prelude-indent-buffer)
+  (prelude-untabify-buffer)
+  (whitespace-cleanup))
+
+(defun ezo-recompile-configs()
+  "Byte-compile all your config files again."
+  (interactive)
+  (byte-recompile-directory prelude-modules-dir 0)
+  (byte-recompile-file "~/.emacs.d/init.el")
+  )
+
+(defun prelude-kill-other-buffers ()
+  "Kill all buffers but the current one. Doesn't mess with special buffers."
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
+      (kill-buffer buffer))))
+
 
 (provide 'ezo-main)

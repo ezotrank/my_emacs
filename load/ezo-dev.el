@@ -1,3 +1,7 @@
+;; to highlight ( and )
+(show-paren-mode t)
+(setq show-paren-style 'parenthesis)
+
 ;;;; Gist
 (require 'gist)
 (setq gist-use-curl t)
@@ -49,7 +53,7 @@
  eshell-scroll-show-maximum-output t
  eshell-scroll-to-bottom-on-output nil
  eshell-scroll-to-bottom-on-input 'this
-)
+ )
 
 ;; scroll to bottom for eshell
 
@@ -57,15 +61,15 @@
   '(progn
      (defun eshell-scroll-to-bottom (window display-start)
        (if (and window (window-live-p window))
-           (let ((resize-mini-windows nil))
-             (save-selected-window
-               (select-window window)
-               (save-restriction
-                 (widen)
-                 (when (> (point) eshell-last-output-start) ; we're editing a line. Scroll.
-                   (save-excursion
-                     (recenter -1)
-                     (sit-for 0))))))))
+	   (let ((resize-mini-windows nil))
+	     (save-selected-window
+	       (select-window window)
+	       (save-restriction
+		 (widen)
+		 (when (> (point) eshell-last-output-start) ; we're editing a line. Scroll.
+		   (save-excursion
+		     (recenter -1)
+		     (sit-for 0))))))))
 
      (defun eshell-add-scroll-to-bottom ()
        (interactive)
@@ -75,31 +79,31 @@
 
      (defun eshell/e (&rest args)
        (if (null args)
-           (bury-buffer)
-         (mapc #'find-file (mapcar #'expand-file-name (eshell-flatten-list (reverse args))))))
+	   (bury-buffer)
+	 (mapc #'find-file (mapcar #'expand-file-name (eshell-flatten-list (reverse args))))))
 
      (defsubst eshell/ls (&rest args)
        "An alias version of `eshell-do-ls'."
        (let ((insert-func 'eshell-buffered-print)
-             (error-func 'eshell-error)
-             (flush-func 'eshell-flush)
-             (args-plus (append
-                         (cond ((not (eq (car (aref eshell-current-handles 1)) t))
-                                (list "-1")))
-                         args)))
-         (eshell-do-ls args-plus)))
+	     (error-func 'eshell-error)
+	     (flush-func 'eshell-flush)
+	     (args-plus (append
+			 (cond ((not (eq (car (aref eshell-current-handles 1)) t))
+				(list "-1")))
+			 args)))
+	 (eshell-do-ls args-plus)))
 
      (defun eshell-maybe-bol ()
        (interactive)
        (let ((p (point)))
-         (eshell-bol)
-         (if (= p (point))
-             (beginning-of-line))))
+	 (eshell-bol)
+	 (if (= p (point))
+	     (beginning-of-line))))
 
      ;; eshell-mode-map is buffer-local
      (add-hook 'eshell-mode-hook (lambda ()
-                                   (define-key eshell-mode-map (kbd "C-a") 'eshell-maybe-bol)
-                                   (define-key eshell-mode-map (kbd "<home>") 'eshell-maybe-bol)))))
+				   (define-key eshell-mode-map (kbd "C-a") 'eshell-maybe-bol)
+				   (define-key eshell-mode-map (kbd "<home>") 'eshell-maybe-bol)))))
 
 
 ;;;; Modeline
@@ -115,29 +119,16 @@
 (require 'yasnippet)
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/git-modules/yasnippet/snippets")
+(yas/global-mode 1)
 
 
 (defun prelude-add-watchwords ()
   (font-lock-add-keywords
    nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\|OPTIMIZE\\):"
-          1 font-lock-warning-face t))))
-
-(defun prelude-local-comment-auto-fill ()
-  (set (make-local-variable 'comment-auto-fill-only-comments) t)
-  (auto-fill-mode t))
-
-(defun prelude-turn-on-whitespace ()
-  (whitespace-mode +1))
-
-(defun prelude-turn-off-whitespace ()
-  (whitespace-mode -1))
-
-(defun prelude-turn-on-abbrev ()
-  (abbrev-mode +1))
+	  1 font-lock-warning-face t))))
 
 (defun prelude-coding-hook ()
   "Default coding hook, useful with any programming language."
-  (prelude-local-comment-auto-fill)
   (prelude-turn-on-abbrev)
   (prelude-turn-on-whitespace)
   (prelude-add-watchwords))
@@ -148,11 +139,14 @@
   (save-excursion
     (let (min max)
       (if (region-active-p)
-          (setq min (region-beginning) max (region-end))
-        (setq min (point) max (point)))
+	  (setq min (region-beginning) max (region-end))
+	(setq min (point) max (point)))
       (comment-or-uncomment-region
        (progn (goto-char min) (line-beginning-position))
        (progn (goto-char max) (line-end-position))))))
+
+;; delete the selection with a keypress
+(delete-selection-mode t)
 
 ;;;; Else
 
