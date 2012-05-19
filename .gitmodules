@@ -55,3 +55,6 @@
 [submodule "git-modules/popup"]
 	path = git-modules/popup
 	url = git://github.com/m2ym/popup-el.git
+[submodule "git-modules/yasnippet"]
+	path = git-modules/yasnippet
+	url = git://github.com/capitaomorte/yasnippet.git
