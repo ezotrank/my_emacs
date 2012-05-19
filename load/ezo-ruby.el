@@ -115,17 +115,6 @@
   ;; indent
   (electric-indent-mode -1)
 
-  ;; Emacs key binding
-  ;; (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
-
-  ;; Riding edge.
-  ;; (setq coffee-command "~/dev/coffee")
-
-  ;; Compile '.coffee' files on every save
-  ;; (and (file-exists-p (buffer-file-name))
-  ;;      (file-exists-p (coffee-compiled-file-name))
-  ;;      (coffee-cos-mode t)))
-
   (prelude-turn-on-whitespace)
   )
 (add-hook 'coffee-mode-hook 'coffee-custom)

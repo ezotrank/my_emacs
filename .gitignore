@@ -14,3 +14,4 @@ elpa
 auto-save-list
 /%backup%~
 var
+.hg

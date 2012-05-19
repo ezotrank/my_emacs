@@ -22,6 +22,5 @@
 (require 'ezo-dev)
 (require 'ezo-ruby)
 (require 'ezo-org)
-(require 'ezo-fun)
 (require 'ezo-misc)
 (require 'ezo-keybind)

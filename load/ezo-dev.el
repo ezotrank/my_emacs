@@ -1,13 +1,9 @@
-;; to highlight ( and )
-(show-paren-mode t)
-(setq show-paren-style 'parenthesis)
-
-;;;; Gist
+;; Gist
 (require 'gist)
 (setq gist-use-curl t)
 (setq gist-view-gist t)
 
-;;;; Autocomplete
+;; Autocomplete
 (add-to-path 'git-modules/auto-complete)
 (add-to-path 'git-modules/popup)
 (require 'auto-complete)
@@ -20,11 +16,11 @@
 (setq ac-auto-show-menu nil)
 (setq ac-auto-show-menu 10)
 
-;;;; Linum
+;; Linum
 (require 'linum+)
 (setq linum-format "%d ")
 
-;;;; IDO
+;; IDO
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-prefix nil
@@ -37,15 +33,15 @@
 (icomplete-mode +1)
 (set-default 'imenu-auto-rescan t)
 
-;;;; Magit
+;; Magit
 (add-to-path 'git-modules/magit)
 (require 'magit)
 
-;;;; Edit Shell scripts
+;; Edit Shell scripts
 (add-to-list 'auto-mode-alist '("\\.sh$" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.zsh$" . sh-mode))
 
-;;;; Eshell
+;; Eshell
 (setq
  eshell-cmpl-cycle-completions nil
  eshell-buffer-shorthand t
@@ -154,5 +150,9 @@
 ;; when you save a script file (starting with "#!")
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
+;; Nav
+(add-to-path 'packages/emacs-nav)
+(require 'nav)
+(nav-disable-overeager-window-splitting)
 
 (provide 'ezo-dev)
