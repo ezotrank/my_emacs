@@ -113,8 +113,7 @@
 ;;;; Yasnippets
 (add-to-path 'git-modules/yasnippet)
 (require 'yasnippet)
-(yas/initialize)
-(yas/load-directory "~/.emacs.d/git-modules/yasnippet/snippets")
+(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
 (yas/global-mode 1)
 
 
