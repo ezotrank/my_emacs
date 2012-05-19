@@ -8,11 +8,8 @@ for module in $(ls $MODULES_DIR); do
     echo "Start pull in $module"
     git checkout master
     git pull
-    if [[ -f Makefile ]]; then
-        echo "Compile $module"
-        make
-    fi
+    # if [[ -f Makefile ]]; then
+    #     echo "Compile $module"
+    #     make
+    # fi
 done
-
-cd $EMACS_HOME
-git commit -am 'Pulled submodules'
