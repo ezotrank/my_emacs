@@ -40,10 +40,10 @@
 (add-to-list 'auto-mode-alist '("\\.html\\.erb$" . rhtml-mode))
 ;; Disable abbrev mode for rhtml, becouse very bad with "<%="
 (add-hook 'rhtml-mode-hook
-          '(lambda ()
-             (abbrev-mode 0)
-             )
-          )
+	  '(lambda ()
+	     (abbrev-mode 0)
+	     )
+	  )
 
 ;; Load Cucumber mode
 (add-to-path 'git-modules/cucumber)
@@ -56,9 +56,9 @@
 (add-to-path 'git-modules/haml-mode)
 (require 'haml-mode)
 (add-hook 'haml-mode-hook
-          '(lambda ()
-             (setq indent-tabs-mode nil)
-             (define-key haml-mode-map "\C-m" 'newline-and-indent)
+	  '(lambda ()
+	     (setq indent-tabs-mode nil)
+	     (define-key haml-mode-map "\C-m" 'newline-and-indent)
 	     (prelude-turn-on-whitespace)
 	     ))
 
@@ -99,7 +99,7 @@
 (defun coffee-custom ()
   "coffee-mode-hook"
 
-    ;; CoffeeScript uses two spaces.
+  ;; CoffeeScript uses two spaces.
   (set (make-local-variable 'tab-width) 2)
 
   ;; If you don't have js2-mode
