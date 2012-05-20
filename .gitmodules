@@ -58,3 +58,6 @@
 [submodule "git-modules/yasnippet"]
 	path = git-modules/yasnippet
 	url = git://github.com/capitaomorte/yasnippet.git
+[submodule "git-modules/rvm"]
+	path = git-modules/rvm
+	url = git://github.com/senny/rvm.el.git

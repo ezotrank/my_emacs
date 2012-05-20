@@ -119,5 +119,9 @@
   )
 (add-hook 'coffee-mode-hook 'coffee-custom)
 
+;; RVM
+(add-to-path 'git-modules/rvm)
+(require 'rvm)
+(rvm-use-default)
 
 (provide 'ezo-ruby)
