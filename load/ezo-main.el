@@ -26,10 +26,10 @@
 
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
-                            (font . "Inconsolata-11")
-                            (left-fringe . -1)
-                            (right-fringe . -1)
-                            ))
+			    (font . "Inconsolata-11")
+			    (left-fringe . -1)
+			    (right-fringe . -1)
+			    ))
 
 ;; highlight marked text
 (transient-mark-mode t)
@@ -119,15 +119,15 @@ middle"
 
 ;; hippie expand is dabbrev expand on steroids
 (setq hippie-expand-try-functions-list '(try-expand-dabbrev
-                                         try-expand-dabbrev-all-buffers
-                                         try-expand-dabbrev-from-kill
-                                         try-complete-file-name-partially
-                                         try-complete-file-name
-                                         try-expand-all-abbrevs
-                                         try-expand-list
-                                         try-expand-line
-                                         try-complete-lisp-symbol-partially
-                                         try-complete-lisp-symbol))
+					 try-expand-dabbrev-all-buffers
+					 try-expand-dabbrev-from-kill
+					 try-complete-file-name-partially
+					 try-complete-file-name
+					 try-expand-all-abbrevs
+					 try-expand-list
+					 try-expand-line
+					 try-complete-lisp-symbol-partially
+					 try-complete-lisp-symbol))
 
 ;; smart indenting and pairing for all
 (electric-pair-mode t)
@@ -181,19 +181,19 @@ middle"
   (interactive)
   (save-excursion
     (if (region-active-p)
-        (progn
-          (indent-region (region-beginning) (region-end))
-          (message "Indented selected region."))
+	(progn
+	  (indent-region (region-beginning) (region-end))
+	  (message "Indented selected region."))
       (progn
-        (prelude-indent-buffer)
-        (message "Indented buffer.")))))
+	(prelude-indent-buffer)
+	(message "Indented buffer.")))))
 
 (defun prelude-copy-file-name-to-clipboard ()
   "Copy the current buffer file name to the clipboard."
   (interactive)
   (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
+		      default-directory
+		    (buffer-file-name))))
     (when filename
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
@@ -203,17 +203,17 @@ middle"
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
-        (filename (buffer-file-name)))
+	(filename (buffer-file-name)))
     (if (not (and filename (file-exists-p filename)))
-        (message "Buffer '%s' is not visiting a file!" name)
+	(message "Buffer '%s' is not visiting a file!" name)
       (let ((new-name (read-file-name "New name: " filename)))
-        (cond ((get-buffer new-name)
-               (message "A buffer named '%s' already exists!" new-name))
-              (t
-               (rename-file name new-name 1)
-               (rename-buffer new-name)
-               (set-visited-file-name new-name)
-               (set-buffer-modified-p nil)))))))
+	(cond ((get-buffer new-name)
+	       (message "A buffer named '%s' already exists!" new-name))
+	      (t
+	       (rename-file name new-name 1)
+	       (rename-buffer new-name)
+	       (set-visited-file-name new-name)
+	       (set-buffer-modified-p nil)))))))
 
 (defun prelude-delete-file-and-buffer ()
   "Kills the current buffer and deletes the file it is visiting"
@@ -265,7 +265,11 @@ middle"
 (defun restart-snippets()
   "Restart Emacs snippets"
   (interactive)
-  (load-file "~/.emacs.d/load/yasnippet_init.el")
+  (add-to-path 'git-modules/yasnippet)
+  (require 'yasnippet)
+  (setq yas/snippet-dirs '("~/.emacs.d/snippets"))
+  (yas/global-mode 1)
+  ;; (load-file "~/.emacs.d/load/yasnippet_init.el")
   )
 
 ;; Kill emacs daemon but save session
@@ -288,11 +292,11 @@ file of a buffer in an external program."
   (interactive)
   (when buffer-file-name
     (shell-command (concat
-                    (if (eq system-type 'darwin)
-                        "open"
-                      (read-shell-command "Open current file with: "))
-                    " "
-                    buffer-file-name))))
+		    (if (eq system-type 'darwin)
+			"open"
+		      (read-shell-command "Open current file with: "))
+		    " "
+		    buffer-file-name))))
 
 (defun prelude-google ()
   "Googles a query or region if any."
@@ -301,7 +305,7 @@ file of a buffer in an external program."
    (concat
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
     (if mark-active
-        (buffer-substring (region-beginning) (region-end))
+	(buffer-substring (region-beginning) (region-end))
       (read-string "Google: ")))))
 
 (defun prelude-move-line-up ()

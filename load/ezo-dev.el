@@ -113,8 +113,26 @@
 ;;;; Yasnippets
 (add-to-path 'git-modules/yasnippet)
 (require 'yasnippet)
-(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
 (yas/global-mode 1)
+
+;; Settings for yasnippet.
+(defun yasnippet-settings ()
+  "settings for `yasnippet'."
+
+  (setq yas/snippet-dirs (concat "~/.emacs.d/" "snippets"))
+  (yas/load-directory yas/snippet-dirs)
+
+  ;; Reload snippet after snippet buffer save.
+  (defun yasnippet-reload-after-save ()
+    (let* ((bfn (expand-file-name (buffer-file-name)))
+           (root (expand-file-name yas/snippet-dirs)))
+      (when (string-match (concat "^" root) bfn)
+        (yas/load-snippet-buffer))))
+  (add-hook 'after-save-hook 'yasnippet-reload-after-save)
+)
+
+(eval-after-load "yasnippet"
+  `(yasnippet-settings))
 
 
 (defun prelude-add-watchwords ()
