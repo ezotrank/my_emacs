@@ -21,8 +21,11 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; custom Emacs 24 color themes support
-(add-to-list 'custom-theme-load-path (concat prelude-dir "themes/"))
-(load-theme 'zenburn t)
+;; (add-to-list 'custom-theme-load-path (concat prelude-dir "themes/"))
+;; (load-theme 'zenburn t)
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/git-modules/theme-solarized")
+(load-theme 'solarized-dark t)
 
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")

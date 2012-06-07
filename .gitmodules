@@ -64,3 +64,6 @@
 [submodule "git-modules/php-mode"]
 	path = git-modules/php-mode
 	url = git://github.com/ejmr/php-mode.git
+[submodule "git-modules/theme-solarized"]
+	path = git-modules/theme-solarized
+	url = git://github.com/sellout/emacs-color-theme-solarized.git
