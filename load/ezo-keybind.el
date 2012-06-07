@@ -32,6 +32,6 @@
 
 (global-set-key (kbd "M-g") 'goto-line)
 
-(global-set-key (kbd "C-3") 'comment-or-uncomment-current-line-or-region)
+(global-set-key (kbd "M-;") 'comment-or-uncomment-current-line-or-region)
 
 (provide 'ezo-keybind)

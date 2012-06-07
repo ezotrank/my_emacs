@@ -61,3 +61,6 @@
 [submodule "git-modules/rvm"]
 	path = git-modules/rvm
 	url = git://github.com/senny/rvm.el.git
+[submodule "git-modules/php-mode"]
+	path = git-modules/php-mode
+	url = git://github.com/ejmr/php-mode.git
