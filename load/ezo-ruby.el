@@ -12,8 +12,8 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; For brackets and nice ruby code style
-(add-to-path 'git-modules/ruby-electric)
-(require 'ruby-electric)
+;; (add-to-path 'git-modules/ruby-electric)
+;; (require 'ruby-electric)
 
 ;; For insert end
 (add-to-path 'git-modules/ruby-end)
