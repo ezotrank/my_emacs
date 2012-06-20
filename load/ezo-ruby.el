@@ -115,7 +115,7 @@
   ;; indent
   (electric-indent-mode -1)
 
-  (prelude-turn-on-whitespace)
+  ;; (prelude-turn-on-whitespace)
   )
 (add-hook 'coffee-mode-hook 'coffee-custom)
 

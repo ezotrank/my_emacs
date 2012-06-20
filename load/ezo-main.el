@@ -29,7 +29,8 @@
 
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
-			    (font . "Inconsolata-11")
+			    ;; (font . "Inconsolata-11")
+			    (font . "Monospace-11")
 			    (left-fringe . -1)
 			    (right-fringe . -1)
 			    ))
@@ -337,13 +338,13 @@ file of a buffer in an external program."
 (defun tmux ()
   "Open the developer screen"
   (interactive nil)
-  (shell-command "urxvtc -e 'tmux'")
+  (shell-command "urxvt -e 'tmux' &>/dev/null &")
   )
 
 (defun rxvt ()
   "Open urxvtc terminal in current direcotry"
   (interactive nil)
-  (shell-command "urxvtc")
+  (shell-command "urxvt &>/dev/null &")
   )
 
 

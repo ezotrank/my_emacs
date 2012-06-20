@@ -1,0 +1,4 @@
+one: ${1: one object}
+few: ${2: two objects}
+many: ${3: five objects}
+other: ${4: 31 object}$0

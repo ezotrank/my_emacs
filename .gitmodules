@@ -67,3 +67,6 @@
 [submodule "git-modules/theme-solarized"]
 	path = git-modules/theme-solarized
 	url = git://github.com/sellout/emacs-color-theme-solarized.git
+[submodule "git-modules/full-ack"]
+	path = git-modules/full-ack
+	url = git://github.com/nschum/full-ack.git
