@@ -59,7 +59,7 @@
 	  '(lambda ()
 	     (setq indent-tabs-mode nil)
 	     (define-key haml-mode-map "\C-m" 'newline-and-indent)
-	     (prelude-turn-on-whitespace)
+	     ;; (prelude-turn-on-whitespace)
 	     ))
 
 (require 'slim-mode)
