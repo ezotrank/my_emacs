@@ -7,9 +7,11 @@
 
 
 (global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "C-c g") 'prelude-google)
 (global-set-key (kbd "C-c o") 'prelude-open-with)
 (global-set-key (kbd "<f12>") 'menu-bar-mode)
+
+;; (global-set-key (kbd "C-x e a") 'kill-all-buffers)
+;; (global-set-key (kbd "C-x e o") 'prelude-kill-other-buffers)
 
 ;; I don't like Ctrl-Z
 (global-set-key (kbd "C-z") (lambda ()

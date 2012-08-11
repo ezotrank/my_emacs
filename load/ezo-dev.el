@@ -179,4 +179,8 @@
 ;; (autoload 'ack-find-same-file "full-ack" nil t)
 ;; (autoload 'ack-find-file "full-ack" nil t)
 
+;; JSON mode
+(add-to-path 'git-modules/json-mode)
+(require 'json-mode)
+
 (provide 'ezo-dev)

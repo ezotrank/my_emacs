@@ -265,6 +265,13 @@ middle"
     (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
       (kill-buffer buffer))))
 
+(defun kill-all-buffers()
+  "Kill all buffers"
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (or (not (buffer-file-name buffer)))
+      (kill-buffer buffer)))
+  )
 
 (defun restart-snippets()
   "Restart Emacs snippets"

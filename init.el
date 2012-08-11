@@ -25,3 +25,5 @@
 (require 'ezo-org)
 (require 'ezo-misc)
 (require 'ezo-keybind)
+
+(unless (server-running-p) (server-start))
