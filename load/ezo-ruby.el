@@ -12,8 +12,8 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; For brackets and nice ruby code style
-;; (add-to-path 'git-modules/ruby-electric)
-;; (require 'ruby-electric)
+(add-to-path 'git-modules/ruby-electric)
+(require 'ruby-electric)
 
 ;; For insert end
 (add-to-path 'git-modules/ruby-end)
@@ -85,11 +85,6 @@
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 (setq scss-compile-at-save nil)
 
-;;;; JavaScript
-(add-to-path 'git-modules/js2-mode)
-(autoload 'js2-mode "js2-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
 ;; Coffee mode
 (add-to-path 'git-modules/coffee-mode)
 (require 'coffee-mode)
@@ -120,8 +115,8 @@
 (add-hook 'coffee-mode-hook 'coffee-custom)
 
 ;; RVM
-(add-to-path 'git-modules/rvm)
-(require 'rvm)
-(rvm-use-default)
+;; (add-to-path 'git-modules/rvm)
+;; (require 'rvm)
+;; (rvm-use-default)
 
 (provide 'ezo-ruby)

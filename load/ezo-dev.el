@@ -182,5 +182,6 @@
 ;; JSON mode
 (add-to-path 'git-modules/json-mode)
 (require 'json-mode)
+(add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
 
 (provide 'ezo-dev)

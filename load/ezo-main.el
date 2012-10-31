@@ -20,13 +20,29 @@
 ;; Ask questions with short answers
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; custom Emacs 24 color themes support
-;; (add-to-list 'custom-theme-load-path (concat prelude-dir "themes/"))
-;; (load-theme 'zenburn t)
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/git-modules/theme-solarized")
 
-(add-to-list 'custom-theme-load-path "~/.emacs.d/git-modules/theme-solarized")
-(load-theme 'solarized-dark t)
+;; test for each frame or console
+;; (defun color-theme-for-win-sys (frame)
+;;   (let ((color-theme-is-global nil))
+;;     (select-frame frame)
+;;     (when (window-system frame)
+;;       (load-theme 'solarized-dark t t)
+;;       (enable-theme 'solarized-dark)
+;;       )))
 
+;; hook on after-make-frame-functions
+;; (add-hook 'after-make-frame-functions 'color-theme-for-win-sys)
+
+;; Start up the color theme in this initial frame.
+;; (let ((color-theme-is-global nil))
+;;   (when (window-system)
+;;     (load-theme 'solarized-dark t t)
+;;     (enable-theme 'solarized-dark)
+;;     ))
+
+(load-theme 'wombat t)
+	
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
 			    ;; (font . "Inconsolata-11")
@@ -133,10 +149,11 @@ middle"
 					 try-complete-lisp-symbol-partially
 					 try-complete-lisp-symbol))
 
+;; TODO: comment this because I have trouble in ruby mode with {}
 ;; smart indenting and pairing for all
-(electric-pair-mode t)
-(electric-indent-mode t)
-(electric-layout-mode t)
+;; (electric-pair-mode t)
+;; (electric-indent-mode t)
+;; (electric-layout-mode t)
 
 ;; to highlight ( and )
 (show-paren-mode t)
@@ -345,13 +362,15 @@ file of a buffer in an external program."
 (defun tmux ()
   "Open the developer screen"
   (interactive nil)
-  (shell-command "urxvt -e 'tmux' &>/dev/null &")
+  (save-window-excursion
+    (async-shell-command "urxvt -e 'tmux' &>/dev/null"))
   )
 
 (defun rxvt ()
-  "Open urxvtc terminal in current direcotry"
+  "Open urxvt terminal in current direcotry"
   (interactive nil)
-  (shell-command "urxvt &>/dev/null &")
+  (save-window-excursion
+    (async-shell-command "urxvt &>/dev/null"))
   )
 
 

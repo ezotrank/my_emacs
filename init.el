@@ -21,6 +21,7 @@
 (require 'ezo-main)
 (require 'ezo-dev)
 (require 'ezo-ruby)
+(require 'ezo-javascript)
 (require 'ezo-php)
 (require 'ezo-org)
 (require 'ezo-misc)
