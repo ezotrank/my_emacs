@@ -73,3 +73,6 @@
 [submodule "git-modules/json-mode"]
 	path = git-modules/json-mode
 	url = git://github.com/joshwnj/json-mode.git
+[submodule "git-modules/flycheck"]
+	path = git-modules/flycheck
+	url = git://github.com/lunaryorn/flycheck.git
