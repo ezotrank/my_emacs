@@ -46,7 +46,7 @@
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
 			    ;; (font . "Inconsolata-11")
-			    (font . "Monospace-11")
+			    (font . "Monospace-12")
 			    (left-fringe . -1)
 			    (right-fringe . -1)
 			    ))

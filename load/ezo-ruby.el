@@ -11,6 +11,10 @@
 (add-to-list 'auto-mode-alist '("Guardfile$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
+;; Enable flycheck
+;; (add-to-path 'git-modules/flycheck)
+;; (add-hook 'ruby-mode-hook 'flycheck-mode)
+
 ;; For brackets and nice ruby code style
 (add-to-path 'git-modules/ruby-electric)
 (require 'ruby-electric)
