@@ -19,33 +19,10 @@
 
 ;; Ask questions with short answers
 (fset 'yes-or-no-p 'y-or-n-p)
-
-;; (add-to-list 'custom-theme-load-path "~/.emacs.d/git-modules/theme-solarized")
-
-;; test for each frame or console
-;; (defun color-theme-for-win-sys (frame)
-;;   (let ((color-theme-is-global nil))
-;;     (select-frame frame)
-;;     (when (window-system frame)
-;;       (load-theme 'solarized-dark t t)
-;;       (enable-theme 'solarized-dark)
-;;       )))
-
-;; hook on after-make-frame-functions
-;; (add-hook 'after-make-frame-functions 'color-theme-for-win-sys)
-
-;; Start up the color theme in this initial frame.
-;; (let ((color-theme-is-global nil))
-;;   (when (window-system)
-;;     (load-theme 'solarized-dark t t)
-;;     (enable-theme 'solarized-dark)
-;;     ))
-
 (load-theme 'wombat t)
 	
 ;; Set a font
 (setq default-frame-alist '((font-backend . "xft")
-			    ;; (font . "Inconsolata-11")
 			    (font . "Monospace-12")
 			    (left-fringe . -1)
 			    (right-fringe . -1)
@@ -54,7 +31,7 @@
 ;; highlight marked text
 (transient-mark-mode t)
 
-					;Don't notify to kill buffer
+;; Don't notify to kill buffer
 (defun kill-current-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))

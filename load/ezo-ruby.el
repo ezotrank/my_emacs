@@ -9,11 +9,34 @@
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("config.ru$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Guardfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.pill$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
-;; Enable flycheck
-;; (add-to-path 'git-modules/flycheck)
-;; (add-hook 'ruby-mode-hook 'flycheck-mode)
+;; Jump. Need for inf-ruby
+(add-to-path 'git-modules/jump)
+
+;; Inf-ruby. Need for rinari
+(add-to-path 'git-modules/inf-ruby)
+(autoload 'inf-ruby "inf-ruby" "Run an inferior Ruby process" t)
+(autoload 'inf-ruby-setup-keybindings "inf-ruby" "" t)
+(eval-after-load 'ruby-mode
+  '(add-hook 'ruby-mode-hook 'inf-ruby-setup-keybindings))
+
+;; Rinari
+(add-to-path 'git-modules/rinari)
+(require 'rinari)
+(setq rinari-tags-file-name "TAGS")
+
+;; (defun rails-build-ctags ()
+;;   "Build ctags for rails project"
+;;   (interactive nil)
+;;   (save-window-excursion
+;;     (async-shell-command "ctags -a -e -f TAGS --tag-relative -R app lib vendor config ~/.rbenv/versions/1.9.3-p392-railsexpress/gemsets/aviasales/gems"))
+;;   )
+
+;; Ext sets
+;; Disable insert -*- condig: utf-8 -*-
+(setq ruby-insert-encoding-magic-comment nil)
 
 ;; For brackets and nice ruby code style
 (add-to-path 'git-modules/ruby-electric)
@@ -28,7 +51,6 @@
   (prelude-turn-on-abbrev)
   (prelude-add-watchwords)
   )
-
 (add-hook 'ruby-mode-hook 'ruby-coding-hook)
 
 ;; Yaml mode
@@ -49,13 +71,6 @@
 	     )
 	  )
 
-;; Load Cucumber mode
-(add-to-path 'git-modules/cucumber)
-(require 'feature-mode)
-(setq feature-default-language "en")
-(setq feature-default-i18n-file "~/.emacs.d/packages/cucumber/i18n.yml")
-(add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
-
 ;; Load HAML mode
 (add-to-path 'git-modules/haml-mode)
 (require 'haml-mode)
@@ -66,13 +81,12 @@
 	     ;; (prelude-turn-on-whitespace)
 	     ))
 
-(require 'slim-mode)
-
 ;; Load Rspec mode
 (add-to-path 'git-modules/rspec)
 (require 'mode-compile)
 (require 'rspec-mode)
 
+;; Markdown mode
 (add-to-path 'git-modules/markdown)
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
@@ -117,10 +131,5 @@
   ;; (prelude-turn-on-whitespace)
   )
 (add-hook 'coffee-mode-hook 'coffee-custom)
-
-;; RVM
-;; (add-to-path 'git-modules/rvm)
-;; (require 'rvm)
-;; (rvm-use-default)
 
 (provide 'ezo-ruby)

@@ -76,3 +76,12 @@
 [submodule "git-modules/flycheck"]
 	path = git-modules/flycheck
 	url = git://github.com/lunaryorn/flycheck.git
+[submodule "git-modules/rinari"]
+	path = git-modules/rinari
+	url = git://github.com/eschulte/rinari.git
+[submodule "git-modules/inf-ruby"]
+	path = git-modules/inf-ruby
+	url = git://github.com/nonsequitur/inf-ruby.git
+[submodule "git-modules/jump"]
+	path = git-modules/jump
+	url = git://github.com/eschulte/jump.el.git
