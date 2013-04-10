@@ -1,4 +1,3 @@
-;; provide a useful error trace if loading this .emacs fails
 (setq debug-on-error nil)
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/site-gentoo.el")

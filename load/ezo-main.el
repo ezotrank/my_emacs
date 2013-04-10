@@ -126,12 +126,6 @@ middle"
 					 try-complete-lisp-symbol-partially
 					 try-complete-lisp-symbol))
 
-;; TODO: comment this because I have trouble in ruby mode with {}
-;; smart indenting and pairing for all
-;; (electric-pair-mode t)
-;; (electric-indent-mode t)
-;; (electric-layout-mode t)
-
 ;; to highlight ( and )
 (show-paren-mode t)
 (setq show-paren-style 'parenthesis)
@@ -267,14 +261,13 @@ middle"
       (kill-buffer buffer)))
   )
 
-(defun restart-snippets()
+(defun reload-all-snippets()
   "Restart Emacs snippets"
   (interactive)
   (add-to-path 'git-modules/yasnippet)
   (require 'yasnippet)
   (setq yas/snippet-dirs '("~/.emacs.d/snippets"))
   (yas/global-mode 1)
-  ;; (load-file "~/.emacs.d/load/yasnippet_init.el")
   )
 
 ;; Kill emacs daemon but save session
@@ -349,6 +342,5 @@ file of a buffer in an external program."
   (save-window-excursion
     (async-shell-command "urxvt &>/dev/null"))
   )
-
 
 (provide 'ezo-main)

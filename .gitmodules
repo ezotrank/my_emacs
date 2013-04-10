@@ -85,3 +85,9 @@
 [submodule "git-modules/jump"]
 	path = git-modules/jump
 	url = git://github.com/eschulte/jump.el.git
+[submodule "git-modules/emacs-slim"]
+	path = git-modules/emacs-slim
+	url = git://github.com/slim-template/emacs-slim.git
+[submodule "git-modules/rbenv"]
+	path = git-modules/rbenv
+	url = git://github.com/senny/rbenv.el.git

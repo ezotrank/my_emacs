@@ -1,3 +1,8 @@
+;; Rbenv
+(add-to-path 'git-modules/rbenv)
+(require 'rbenv)
+(global-rbenv-mode)
+
 (require 'ruby-mode)
 
 (autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
@@ -25,6 +30,10 @@
 ;; Rinari
 (add-to-path 'git-modules/rinari)
 (require 'rinari)
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (defadvice ruby-mode-set-encoding
+              (around ruby-mode-set-encoding-disable activate) nil)))
 (setq rinari-tags-file-name "TAGS")
 
 ;; (defun rails-build-ctags ()
@@ -70,6 +79,10 @@
 	     (abbrev-mode 0)
 	     )
 	  )
+
+;; Load Slim
+(add-to-path 'git-modules/emacs-slim)
+(require 'slim-mode)
 
 ;; Load HAML mode
 (add-to-path 'git-modules/haml-mode)
