@@ -91,3 +91,9 @@
 [submodule "git-modules/rbenv"]
 	path = git-modules/rbenv
 	url = git://github.com/senny/rbenv.el.git
+[submodule "git-modules/rubocop-emacs"]
+	path = git-modules/rubocop-emacs
+	url = git://github.com/bbatsov/rubocop-emacs.git
+[submodule "git-modules/dash"]
+	path = git-modules/dash
+	url = git://github.com/magnars/dash.el.git

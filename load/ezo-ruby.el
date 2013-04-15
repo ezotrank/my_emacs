@@ -37,6 +37,10 @@
               (around ruby-mode-set-encoding-disable activate) nil)))
 (setq rinari-tags-file-name "TAGS")
 
+(add-to-path 'git-modules/dash)
+(add-to-path 'git-modules/rubocop-emacs)
+(require 'rubocop)
+
 ;; (defun rails-build-ctags ()
 ;;   "Build ctags for rails project"
 ;;   (interactive nil)
