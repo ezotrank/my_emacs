@@ -15,6 +15,7 @@
 (add-to-list 'auto-mode-alist '("config.ru$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Guardfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.pill$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.pryrc$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 ;; Jump. Need for inf-ruby
